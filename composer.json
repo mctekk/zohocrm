@@ -1,0 +1,30 @@
+{
+    "name": "vaish/zohocrm",
+    "type": "library",
+    "description": "Zoho CRM API PHP wrapper library",
+    "keywords": ["Zoho CRM"],
+    "license": "MIT",
+
+    "authors": [
+        {
+            "name": "Vojislav Jovanovic",
+            "email": "vaish@vjovanovic.com",
+            "homepage": "https://github.com/vaish/zohocrm-php"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.3.3",
+        "ext-curl": "*"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "Zoho\\": "zohocrm-php/zohocrm-php/src/"
+        }
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    }
+}
