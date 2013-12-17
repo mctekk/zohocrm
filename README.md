@@ -38,7 +38,7 @@ Using by composer, just add this parameters to your `composer.json` **using like
 	        "name": "zohocrm-php/zohocrm-php",
 	        "version": "dev-master",
 	        "source": {
-	            "url": "https://github.com/mctekk/zohocrm-php",
+	            "url": "https://github.com/mctekk/zohocrm",
 	            "type": "git",
 	        	"reference": "master"
 	        }
