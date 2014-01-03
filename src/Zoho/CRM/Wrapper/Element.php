@@ -24,7 +24,7 @@ abstract class Element
     	} catch(\Exception $ex) {
     		return false;
     	} foreach($element as $name => $value)
-			$this->$name = htmlspecialchars_decode($value);
+			$this->$name = stripslashes(urldecode(htmlspecialchars_decode($value)));
 		return true;
     }
 
