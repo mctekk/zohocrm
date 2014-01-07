@@ -432,7 +432,9 @@ class ZohoClient
 		foreach ($properties as $property)
 		{
 			$propName = $property->getName();
-			$xml .= '<FL val="'.str_replace('_', ' ', $propName).'"><![CDATA['.$entity->$propName.']]></FL>';					
+            $propValue = $entity->$propName;
+            if(!empty($propValue))
+                $xml .= '<FL val="'.str_replace('_', ' ', $propName).'"><![CDATA['.$propValue.']]></FL>';
 		} $xml .= '</row>';
 		$xml .= '</'.$this->module.'>';
 		return $xml;
