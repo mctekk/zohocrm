@@ -283,7 +283,7 @@ class ZohoClient
 	 */
 	public function updateRecords($id, $data, $params = array(), $options = array())
 	{
-		if (count($data['records']) > 1) {
+		if (is_array($data) && count($data['records']) > 1) {
 			// Version 4 is mandatory for updating multiple records.
 			$params['version'] = 4;
 		} else
