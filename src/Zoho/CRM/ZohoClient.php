@@ -423,18 +423,12 @@ class ZohoClient
 		$no = 1;
 		$xml = '<'.$this->module.'>';
 		$xml .= '<row no="'. $no .'">';
-		// if (isset($data['options'])) {
-		// 	$xml .= '<row no="'. $no .'">';
-		// 	foreach ($data['options'] as $key => $value)
-		// 		$xml .= '<option val="'. $key .'">'. $value .'</option>';
-		// 	$xml .= '</row>';
-		// 	$no++;
-		// } 
 		foreach ($properties as $property)
 		{
 			$propName = $property->getName();
+			$propValue = $entity->$propName;
 			if(!empty($propValue))			
-				$xml .= '<FL val="'.str_replace('_', ' ', str_replace('N36', '$', $propName)).'"><![CDATA['.$entity->$propName.']]></FL>';					
+				$xml .= '<FL val="'.str_replace('_', ' ', str_replace('N36', '$', $propName)).'"><![CDATA['.$propValue.']]></FL>';					
 		} $xml .= '</row>';
 		$xml .= '</'.$this->module.'>';
 		return $xml;
