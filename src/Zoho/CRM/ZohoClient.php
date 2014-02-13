@@ -181,6 +181,31 @@ class ZohoClient
 	{
 		return $this->call('getRecords', $params);
 	}
+    
+	/**
+	 * Implements getRecords API method.
+	 *
+	 * @param array $params   request parameters
+	 *                        selectColumns     String  Module(optional columns) i.e, leads(Last Name,Website,Email) OR All
+	 *                        fromIndex	        Integer	Default value 1
+	 *                        toIndex	          Integer	Default value 20
+	 *                                                  Maximum value 200
+	 *                        sortColumnString	String	If you use the sortColumnString parameter, by default data is sorted in ascending order.
+	 *                        sortOrderString	  String	Default value - asc
+	 *                                          if you want to sort in descending order, then you have to pass sortOrderString=desc.
+	 *                        lastModifiedTime	DateTime	Default value: null
+	 *                                          If you specify the time, modified data will be fetched after the configured time.
+	 *                        newFormat         Integer	1 (default) - exclude fields with null values in the response
+	 *                                                  2 - include fields with null values in the response
+	 *                        version           Integer	1 (default) - use earlier API implementation
+	 *                                                  2 - use latest API implementation
+	 * @param array $options Options to add for configurations [optional]
+	 * @return Response The Response object
+	 */  
+	public function getRelatedRecords($params = array(), $options = array())
+	{
+		return $this->call('getRelatedRecords', $params);
+	}
 
 	/**
 	 * Implements getSearchRecords API method.
@@ -283,7 +308,7 @@ class ZohoClient
 	 */
 	public function updateRecords($id, $data, $params = array(), $options = array())
 	{
-		if (count($data['records']) > 1) {
+		if (is_array($data) && count($data['records']) > 1) {
 			// Version 4 is mandatory for updating multiple records.
 			$params['version'] = 4;
 		} else

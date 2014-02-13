@@ -103,6 +103,11 @@ class Response
   {
     return $this->records;
   }
+  
+  public function getRelatedRecords()
+  {
+    return $this->records;
+  }
 
   public function getRecordId()
   {
@@ -159,7 +164,7 @@ class Response
       $this->parseResponseGetUsers($xml);
     }
 
-    // getRecords, getSearchRecords, getRecordById, getCVRecords
+    // getRecords, getRelatedRecords, getSearchRecords, getRecordById, getCVRecords
     elseif (isset($xml->result->{$this->module})) {
       $this->parseResponseGetRecords($xml);
     }
