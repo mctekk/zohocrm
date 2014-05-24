@@ -79,9 +79,10 @@ class HttpClient implements HttpClientInterface
     curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, $this->timeout);
 
-    //curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, 0);
-    //curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-    //curl_setopt($this->curl, CURLOPT_SSL_CIPHER_LIST, 'rsa_rc4_128_sha');
+    // curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, 0);
+    // curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($this->curl, CURLOPT_SSL_CIPHER_LIST, 'rsa_rc4_128_sha');
+    curl_setopt($this->curl, CURLOPT_SSLVERSION, 3);
   }
 
 }
