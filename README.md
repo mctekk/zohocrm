@@ -1,7 +1,7 @@
-Zoho CRM library for PHP 5.3+
+Zoho CRM library for PHP 5.5+
 =============================
 
-The Zoho CRM library is a specialized xml, json wrapper for make request to zoho API.
+The Zoho CRM library is a specialized xml, json wrapper for make request to zoho API, base on another vendor from [vaish](https://github.com/vaish/zohocrm-php), but this have some overpower :p.
 
 I often found myself repeating the same pattern for xml | json manipulation with this API over and over. This library implements that pattern.
 
@@ -196,9 +196,3 @@ $response = $ZohoClient->insertRecords($validXML);
 The object Response returned in located in `Zoho\CRM\Request`, contain the code, message, method, module, records, record id, uri and xml returned by zoho, this can be accessed by getters.
 
 Hope that can be useful, comments, issues or just mail me to [frangeris.20@gmail.com](mailto:frangeris.20@gmail.com)
-
-
-
-
-
-

@@ -1,16 +1,16 @@
 <?php namespace Zoho\CRM;
 
-use Zoho\CRM\Common\HttpClientInterface;
-use Zoho\CRM\Common\FactoryInterface;
-use Zoho\CRM\Request\HttpClient;
-use Zoho\CRM\Request\Factory;
-use Zoho\CRM\Wrapper\Element;
+use Zoho\CRM\Common\HttpClientInterface,
+	Zoho\CRM\Common\FactoryInterface,
+	Zoho\CRM\Request\HttpClient,
+	Zoho\CRM\Request\Factory,
+	Zoho\CRM\Wrapper\Element
+	;
 
 /**
  * Client for provide interface with Zoho CRM
  *
  * @package Zoho\CRM
- * @version 1.0.0
  */
 class ZohoClient
 {
@@ -58,6 +58,7 @@ class ZohoClient
 
 	/**
 	 * Construct
+	 * 
 	 * @param string $authtoken Token for connection
 	 * @param HttpClientInterface $client HttpClient for connection [optional]
 	 * @param FactotoryInterface $factory [optional]
@@ -453,7 +454,7 @@ class ZohoClient
 			$propName = $property->getName();
 			$propValue = $entity->$propName;
 			if(!empty($propValue))			
-				$xml .= '<FL val="'.str_replace('_', ' ', str_replace('N36', '$', $propName)).'"><![CDATA['.$propValue.']]></FL>';					
+				$xml .= '<FL val="'.str_replace(['_', 'N36', '%5F'], [' ', '$', '_'], $propName).'"><![CDATA['.$propValue.']]></FL>';					
 		} $xml .= '</row>';
 		$xml .= '</'.$this->module.'>';
 		return $xml;
