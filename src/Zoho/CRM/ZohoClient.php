@@ -319,7 +319,35 @@ class ZohoClient
 			$params['id'] = $id;
 		} return $this->call('updateRecords', $params, $data);
 	}
-
+		
+	/**
+	 * Implements uploadFile API method.
+	 *
+	 * @param string 			$id       	 unique ID of the record to be updated
+	 *
+	 * @param file path		 	$content     Pass the File Input Stream of the file
+	 *
+	 * @param array  $params   request parameters
+	 *                         wfTrigger    Boolean   Set value as true to trigger the workflow rule
+	 *                                                while inserting record into CRM account. By default, this parameter is false.
+	 *                         newFormat    Integer   1 (default) - exclude fields with "null" values while updating data
+	 *                                                2 - include fields with "null" values while updating data
+	 *                         version      Integer   1 (default) - use earlier API implementation
+	 *                                                2 - use latest API implementation
+	 *                                                4 - update multiple records in a single API method call
+	 *
+	 * @return Response The Response object
+	 */
+	public function uploadFile($id, $content, $params = array())
+	{
+		if (empty($id)) {
+			throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
+		}
+		$params['id'] = $id;
+		$params['content'] = $content;
+		return $this->call('uploadFile', $params);
+	}
+	
 	/**
 	 * Get the module
 	 * 
@@ -385,7 +413,9 @@ class ZohoClient
 		$params += array('newFormat' => 1); //'version' => 2,
 		if (!empty($data))
 			$params['xmlData'] = (isset($options['map']) && $options['map'])?$this->toXML($data) :$data;
-		return http_build_query($params, '', '&');
+		if(!isset($params['content']))	
+			return http_build_query($params, '', '&');
+		return $params;
 	}
 
 	/**
