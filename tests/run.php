@@ -1,11 +1,25 @@
 <?php
 
-// Include bootstrap loader
-require_once '/home/composer/public_html/zohocrm-php/vendor/autoload.php';
+// Include bootstrap loader instead of files if you want
+require_once '../src/Zoho/CRM/Common/HttpClientInterface.php';
+require_once '../src/Zoho/CRM/Common/FactoryInterface.php';
+require_once '../src/Zoho/CRM/Request/HttpClient.php';
+require_once '../src/Zoho/CRM/Request/Factory.php';
+require_once '../src/Zoho/CRM/Request/Response.php';
+require_once '../src/Zoho/CRM/ZohoClient.php';
+require_once '../src/Zoho/CRM/Wrapper/Element.php';
+require_once '../src/Zoho/CRM/Entities/Lead.php';
 
-use Zoho\CRM\Entities\Lead;
+use Zoho\CRM\Request\HttpClient,
+	Zoho\CRM\Request\Factory,
+	Zoho\CRM\ZohoClient,
+	Zoho\CRM\Wrapper\Element,
+	Zoho\CRM\Entities\Lead,
+	Zoho\CRM\Request\Response
+	;
 
-// Create the client
+/*
+
 $xmlstr = '
 <Lead>
 	<LendioRepresentative>Doug Goodwin</LendioRepresentative>
@@ -40,10 +54,29 @@ $xmlstr = '
 	<Bankruptcy>No</Bankruptcy>
 </Lead>';
 
+*/
 
 $lead = new Lead();
-$lead->deserializeXml($xmlstr);
+// $lead->deserializeXml($xmlstr);
 
-echo $lead->LendioRepresentative."\n";
-echo $lead->Email."\n";
-echo $lead->Address->Street."\n";
+// Receiving request
+$request = [
+	'first_name' => 'Test',
+	'last_name' => 'Test',
+	'email' => 'aisrxybja2@sharklasers.com',
+	'phone' => '404-855-2695',
+	'affiliate_record%5FID' => '95641000016912544'
+];
+
+$xmlstr2 = $lead->serializeXml($request); // Mapping the request for create xmlstr
+$lead->deserializeXml($xmlstr2);
+
+$ZohoClient = new ZohoClient('YOU_TOKEN'); // Make the connection to zoho api
+$ZohoClient->setModule('Leads'); // Selecting the module
+$validXML = $ZohoClient->mapEntity($lead); // Create valid XML (zoho format)
+
+// Insert the new record
+$response = $ZohoClient->insertRecords($validXML, ['wfTrigger' => 'true']);
+
+print_r($response);
+print "\n";
