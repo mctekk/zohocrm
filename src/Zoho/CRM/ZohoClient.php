@@ -61,7 +61,7 @@ class ZohoClient
 	 * 
 	 * @param string $authtoken Token for connection
 	 * @param HttpClientInterface $client HttpClient for connection [optional]
-	 * @param FactotoryInterface $factory [optional]
+	 * @param FactoryInterface $factory [optional]
 	 */
 	public function __construct($authtoken, HttpClientInterface $client = null, FactoryInterface $factory = null)
 	{
