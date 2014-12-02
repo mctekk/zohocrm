@@ -24,7 +24,10 @@
         "php": ">=5.3.3",
         "ext-curl": "*"
     },
-    "autoload": {      
+    "autoload": {
+        "classmap": [
+            "src/"
+        ],
         "psr-0": {
             "Zoho\\": "mctekk/zohocrm/src/"
         }
