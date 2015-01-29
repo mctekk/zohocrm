@@ -19,34 +19,11 @@ simple, but rather very powerful for complex XML applications.
 Installation
 ------------
 
-Using by composer, just add this parameters to your `composer.json` **using like repository, no composer package, composer it's just for installation**:
-```json
-	"require": {
-		"zohocrm-php/zohocrm-php": "dev-master"
-	},
-	"autoload": {
-		"classmap": [
-			"vendor/zohocrm-php/zohocrm-php/src/"
-		],	
-		"psr-0": {
-			"Zoho\\": "zohocrm-php/zohocrm-php/src/"
-		}
-	},	
-	"repositories": [{
-	    "type": "package",
-	    "package": {
-	        "name": "zohocrm-php/zohocrm-php",
-	        "version": "dev-master",
-	        "source": {
-	            "url": "https://github.com/mctekk/zohocrm",
-	            "type": "git",
-	        	"reference": "master"
-	        }
-	    }
-    }],	
-```
+Using by composer, just add this parameters to your `composer.json` 
 
-Then, run `composer.phar update` and you should be good.
+    "mctekk/zohocrm": "dev-master"
+
+Then, run `$ composer update` and you should be good.
 
 Let's start
 -----------
@@ -60,9 +37,10 @@ The first thing that you have to do is use the namespaces for access to all the 
 
 // Include your autoloader for php files of composer
 
-use Zoho\CRM\ZohoClient;
-use Zoho\CRM\Entities\Lead;
-use Zoho\CRM\Exception\ZohoCRMException;
+use Zoho\CRM\ZohoClient,
+	Zoho\CRM\Entities\Lead,
+	Zoho\CRM\Exception\ZohoCRMException
+	;
 
 $request = array(
 	'first_name' => 'Test_fname',
@@ -195,4 +173,4 @@ $response = $ZohoClient->insertRecords($validXML);
 
 The object Response returned in located in `Zoho\CRM\Request`, contain the code, message, method, module, records, record id, uri and xml returned by zoho, this can be accessed by getters.
 
-Hope that can be useful, comments, issues or just mail me to [frangeris.20@gmail.com](mailto:frangeris.20@gmail.com)
+Hope that can be useful :)
