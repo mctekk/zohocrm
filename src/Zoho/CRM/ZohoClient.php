@@ -441,18 +441,18 @@ class ZohoClient
 			$xml .= '<row no="'. $no .'">';
 			foreach ($row as $key => $value) {
 				if (is_array($value)) {
-					$xml .= '<FL val="'. $key .'">';
+					$xml .= '<FL val="'. str_replace('&', 'and', $key) .'">';
 					foreach ($value as $k => $v) {
 						list($tag, $attribute) = explode(' ', $k);
 						$xml .= '<'. $tag .' no="'. $attribute .'">';
 						foreach ($v as $kk => $vv) {
-							$xml .= '<FL val="'. $kk .'"><![CDATA['. $vv .']]></FL>';
+							$xml .= '<FL val="'. str_replace('&', 'and', $kk) .'"><![CDATA['. $vv .']]></FL>';
 						}
 						$xml .= '</'. $tag .'>';
 					}
 					$xml .= '</FL>';
 				} else {
-					$xml .= '<FL val="'. $key .'"><![CDATA['. $value .']]></FL>';
+					$xml .= '<FL val="'. str_replace('&', 'and', $key) .'"><![CDATA['. $value .']]></FL>';
 				}
 			}
 			$xml .= '</row>';
