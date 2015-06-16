@@ -424,7 +424,7 @@ class ZohoClient
 	 * @param array $data Data to convert
 	 * @return XML
 	 */
-	protected function toXML($data)
+	public function toXML($data)
 	{
 		$root = isset($data['root']) ? $data['root'] : $this->module;
 		$no = 1;
