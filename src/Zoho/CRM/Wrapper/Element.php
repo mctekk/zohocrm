@@ -43,7 +43,7 @@ abstract class Element
         $output = '<Lead>';
         foreach ($fields as $key => $value) {
             if(empty($value)) continue; // Unnecessary fields
-            $key = str_replace(' ', '_', ucwords(str_replace(['_', '$', '%5F'], [' ', 'N36', 'E5F'], $key)));
+            $key = str_replace(' ', '_', ucwords(str_replace(['_', '$', '%5F', '?'], [' ', 'N36', 'E5F', '98T'], $key)));
             $output .= '<'.$key.'>'.htmlspecialchars($value).'</'.$key.'>';
         } $output .= '</Lead>';
         return $output;
