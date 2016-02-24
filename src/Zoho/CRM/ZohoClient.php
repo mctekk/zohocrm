@@ -285,7 +285,6 @@ class ZohoClient
 			$params['duplicateCheck'] = 1;
 		}
 		if (!isset($params['version']) && isset($data['records']) && count($data['records']) > 1) $params['version'] = 4;
-		\Log::info('XML DATA FOR ZOHO : ' . $data);
 		return $this->call('insertRecords', $params, $data, $options);
 	}
 
@@ -416,8 +415,8 @@ class ZohoClient
 		$params += array('newFormat' => 1); //'version' => 2,
 		if (!empty($data))
 			$params['xmlData'] = (isset($options['map']) && $options['map']) ? $this->toXML($data) : $data;
-//		if (!isset($params['content']))
-//			return http_build_query($params, '', '&');
+		if (!isset($params['content']))
+			return http_build_query($params, '', '&');
 		return $params;
 	}
 
