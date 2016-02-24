@@ -3,8 +3,8 @@
 use Zoho\CRM\Exception\ZohoCRMException;
 
 /**
- * Zoho CRM API Response. 
- * 
+ * Zoho CRM API Response.
+ *
  * Parses the ZohoCRM response into an object and
  * normalizes different response formats.
  *
@@ -15,49 +15,49 @@ class Response
 {
   /**
    * Code error
-   * 
+   *
    * @var string
    */
   protected $code;
 
   /**
    * Message of the error
-   * 
+   *
    * @var string
    */
   protected $message;
 
   /**
    * Method used
-   * 
+   *
    * @var string
    */
   protected $method;
 
   /**
    * Module used
-   * 
+   *
    * @var string
    */
   protected $module;
 
   /**
    * Records details affecteds
-   * 
+   *
    * @var array
    */
   protected $records = array();
 
   /**
    * Specific redord affected
-   * 
+   *
    * @var string
    */
   protected $recordId;
 
   /**
    * URL used for the request
-   * 
+   *
    * @var string
    */
   protected $uri;
@@ -103,7 +103,7 @@ class Response
   {
     return $this->records;
   }
-  
+
   public function getRelatedRecords()
   {
     return $this->records;
