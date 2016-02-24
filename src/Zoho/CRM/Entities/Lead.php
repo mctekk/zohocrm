@@ -59,7 +59,7 @@ class Lead extends Element
 	 * 
 	 * @var string
 	 */
-	public $Lead_Souce;
+	public $Lead_Source;
 
 	/**
 	 * Industry to which the lead belongs
@@ -108,7 +108,7 @@ class Lead extends Element
 	 * 
 	 * @var string
 	 */	
-	public $Secundary_Email;
+	public $Secondary_Email;
 
 	/**
 	 * Skype ID of the lead. Currently skype ID 
@@ -159,7 +159,7 @@ class Lead extends Element
 	 * 
 	 * @var string
 	 */
-	public $Campaing_Source;
+	public $Campaign_Source;
 
 	/**
 	 * Street address of the lead
@@ -205,7 +205,8 @@ class Lead extends Element
 
 	/**
 	 * Getter
-	 * 
+	 *
+	 * @param $property
 	 * @return mixed
 	 */
 	public function __get($property)
