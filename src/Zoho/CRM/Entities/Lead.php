@@ -1,6 +1,6 @@
 <?php namespace Zoho\CRM\Entities;
 
-use Zoho\CRM\Wrapper\Element;
+use Zoho\CRM\Common\ZohoRecord;
 
 /**
  * Entity for leads inside Zoho
@@ -9,8 +9,9 @@ use Zoho\CRM\Wrapper\Element;
  * @package Zoho\CRM\Entities
  * @version 1.0.0
  */
-class Lead extends Element 
+class Lead extends ZohoRecord
 {
+
 	/**
 	 * Zoho CRM user to whom the Lead is assigned.
 	 * 
@@ -202,6 +203,14 @@ class Lead extends Element
 	 * @var string
 	 */
 	public $Description;
+
+	/**
+	 * Lead constructor.
+	 */
+	public function __construct()
+	{
+		parent::__construct(ZohoRecord::MODULE_LEADS);
+	}
 
 	/**
 	 * Getter

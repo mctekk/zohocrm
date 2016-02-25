@@ -29,7 +29,7 @@
             "src/"
         ],
         "psr-0": {
-            "Zoho\\": "mctekk/zohocrm/src/"
+            "Zoho\\": "WondersLabCorporation/zohocrm/src/"
         }
     },
     "require-dev": {

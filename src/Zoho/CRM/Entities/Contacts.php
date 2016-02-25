@@ -1,15 +1,23 @@
 <?php namespace Zoho\CRM\Entities;
 
 
-use Zoho\CRM\Wrapper\Element;
+use Zoho\CRM\Common\ZohoRecord;
 
-class Contacts extends Element {
+class Contacts extends ZohoRecord {
 
 	private $First_Name;
 	private $Last_Name;
 	private $Account_Name;
 	private $Email;
 	private $Phone;
+
+	/**
+	 * Contacts constructor.
+	 */
+	public function __construct()
+	{
+		parent::__construct(ZohoRecord::MODULE_CONTACTS);
+	}
 
 	/**
 	 * Getter

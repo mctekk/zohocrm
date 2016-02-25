@@ -1,6 +1,6 @@
 <?php namespace Zoho\CRM\Entities;
 
-use Zoho\CRM\Wrapper\Element;
+use Zoho\CRM\Common\ZohoRecord;
 
 /**
  * Entity for accounts inside Zoho
@@ -9,7 +9,7 @@ use Zoho\CRM\Wrapper\Element;
  * @package Zoho\CRM\Entities
  * @version 1.0.0
  */
-class Account extends Element 
+class Account extends ZohoRecord
 {
 	/**
 	 * Specify the company name. This field is mandatory.
@@ -168,6 +168,14 @@ class Account extends Element
 	 * @var string
 	 */
 	private $Description;
+
+	/**
+	 * Account constructor.
+	 */
+	public function __construct()
+	{
+		parent::__construct(ZohoRecord::MODULE_ACCOUNTS);
+	}
 
 	/**
 	 * Getter

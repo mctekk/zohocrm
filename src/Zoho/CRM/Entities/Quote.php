@@ -1,9 +1,9 @@
 <?php namespace Zoho\CRM\Entities;
 
 
-use Zoho\CRM\Wrapper\Element;
+use Zoho\CRM\Common\ZohoRecord;
 
-class Quote extends Element {
+class Quote extends ZohoRecord {
 
 	/**
 	 * Specify the name of the quote. This field is mandatory.
@@ -40,6 +40,14 @@ class Quote extends Element {
 	 */
 	private $List_Price;
 
+	/**
+	 * Quote constructor.
+	 */
+	public function __construct()
+	{
+		parent::__construct(ZohoRecord::MODULE_QUOTES);
+
+	}
 
 
 	/**

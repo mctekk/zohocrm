@@ -1,9 +1,9 @@
 <?php namespace Zoho\CRM\Entities;
 
 
-use Zoho\CRM\Wrapper\Element;
+use Zoho\CRM\Common\ZohoRecord;
 
-class Potentials extends Element {
+class Potentials extends ZohoRecord {
 
 	private $Potential_Name;
 	private $Account_Name;
@@ -40,6 +40,14 @@ class Potentials extends Element {
 	private $Deliver_Address1_Request_Change;
 	private $Deliver_Zipcode_Request_Change;
 	private $Deliver_Notes_Request_Change;
+
+	/**
+	 * Potentials constructor.
+	 */
+	public function __construct()
+	{
+		parent::__construct(ZohoRecord::MODULE_POTENTIALS);
+	}
 
 
 	/**

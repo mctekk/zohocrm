@@ -1,6 +1,6 @@
 <?php namespace Zoho\CRM\Entities;
 
-use Zoho\CRM\Wrapper\Element;
+use Zoho\CRM\Common\ZohoRecord;
 
 /**
  * Entity for Affiliates inside Zoho
@@ -8,102 +8,110 @@ use Zoho\CRM\Wrapper\Element;
  *
  * @version 1.0.0
  */
-class Vendor extends Element 
+class Vendor extends ZohoRecord
 {
 	/**
 	 * Name of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Vendor_Name;
-	
+
 	/**
 	 * Phone of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Phone;
-	
+
 	/**
 	 * Email of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Email;
-	
+
 	/**
 	 * Company of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Company;
-	
+
 	/**
 	 * Identifies if coming from finance agents
-	 * 
+	 *
 	 * @var boolean
 	 */
 	private $BFA;
-	
+
 	/**
 	 *Status of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Status;
-	
+
 	/**
 	 * Member number of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Member_Number;
-	
+
 	/**
 	 * Sponsor of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Sponsor;
-	
+
 	/**
 	 * City of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $City;
-	
+
 	/**
 	 * State of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $State;
-	
+
 	/**
 	 * Zip_Code of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Zip_Code;
-	
+
 	/**
 	 * Street of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Street;
-	
+
 	/**
 	 * Website of the Affiliates
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Website;
 
 	/**
+	 * Vendor constructor.
+	 */
+	public function __construct()
+	{
+		parent::__construct(ZohoRecord::MODULE_VENDORS);
+	}
+
+	/**
 	 * Getter
-	 * 
+	 *
 	 * @return mixed
 	 */
 	public function __get($property)
@@ -122,5 +130,5 @@ class Vendor extends Element
 	{
 		$this->$property = $value;
 		return $this->$property;
-	}	
+	}
 }
