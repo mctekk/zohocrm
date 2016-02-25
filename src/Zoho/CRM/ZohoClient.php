@@ -61,7 +61,7 @@ class ZohoClient
     public function __construct($authtoken = null, HttpClientInterface $client = null, FactoryInterface $factory = null)
     {
         if ($authtoken) {
-            $this->authtoken = $authtoken;
+            self::setToken($authtoken);
         }
         // Only XML format is supported for the time being
         $this->format = 'xml';
@@ -418,7 +418,7 @@ class ZohoClient
     protected function getRequestBody($params, $data, $options)
     {
         $params['scope'] = 'crmapi';
-        $params['authtoken'] = $this->authtoken;
+        $params['authtoken'] = self::$authtoken;
         $params += array('newFormat' => 1); //'version' => 2,
         if (!empty($data)) {
             $params['xmlData'] = (isset($options['map']) && $options['map']) ? $this->toXML($data) : $data;
@@ -478,6 +478,7 @@ class ZohoClient
      *
      * @param Element $entity Element with values on fields setted
      * @return string XML created
+     * @throws \Exception
      * @todo
     - Add iteration for multiples entities and creation of xml with collection
      */
