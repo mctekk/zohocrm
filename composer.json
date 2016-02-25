@@ -1,5 +1,5 @@
 {
-    "name": "mctekk/zohocrm",
+    "name": "WondersLabCorporation/zohocrm",
     "type": "library",
     "description": "Wrapper for interact with Zoho CRM API for php",
     "keywords": ["Zoho CRM API PHP Wrapper"],
