@@ -39,7 +39,10 @@ use Zoho\CRM\Common\ZohoRecord;
  */
 class Lead extends ZohoRecord
 {
-
+	protected function getEntityName()
+	{
+		return 'Leads';
+	}
 	/**
 	 * Zoho CRM user to whom the Lead is assigned.
 	 * 

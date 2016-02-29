@@ -23,6 +23,10 @@ use Zoho\CRM\Common\ZohoRecord;
  */
 class Vendor extends ZohoRecord
 {
+	protected function getEntityName()
+	{
+		return 'Vendors';
+	}
 	/**
 	 * Name of the Affiliates
 	 *

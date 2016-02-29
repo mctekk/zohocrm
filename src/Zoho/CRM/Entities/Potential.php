@@ -40,7 +40,12 @@ use Zoho\CRM\Common\ZohoRecord;
  *
  * @package Zoho\CRM\Entities
  */
-class Potential extends ZohoRecord {
+class Potential extends ZohoRecord
+{
+	protected function getEntityName()
+	{
+		return 'Potentials';
+	}
 
 	protected $Potential_Name;
 	protected $Account_Name;

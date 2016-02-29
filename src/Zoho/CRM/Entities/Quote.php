@@ -16,8 +16,12 @@ use Zoho\CRM\Common\ZohoRecord;
  *
  * @package Zoho\CRM\Entities
  */
-class Quote extends ZohoRecord {
-
+class Quote extends ZohoRecord
+{
+	protected function getEntityName()
+	{
+		return 'Quotes';
+	}
 	/**
 	 * Specify the name of the quote. This field is mandatory.
 	 * @var string

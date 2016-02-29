@@ -42,6 +42,10 @@ use Zoho\CRM\Common\ZohoRecord;
  */
 class Account extends ZohoRecord
 {
+	protected function getEntityName()
+	{
+		return 'Accounts';
+	}
 	/**
 	 * Specify the company name. This field is mandatory.
 	 * 

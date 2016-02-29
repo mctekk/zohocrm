@@ -9,7 +9,6 @@
 namespace Zoho\CRM\Common;
 
 use Yii;
-use yii\base\Exception;
 use Zoho\CRM\Entities\Account;
 use Zoho\CRM\Exception\UnknownEntityException;
 use Zoho\CRM\Exception\ZohoCRMException;
@@ -38,17 +37,24 @@ abstract class ZohoRecord extends Element
     /**
      * ZohoRecord constructor.
      */
-    public function __construct($zohoClient = null, $zohoApiKey = null)
+    public function __construct($params = [])
     {
-        if (!$zohoClient && !$zohoApiKey) {
-            throw new Exception('ZohoClient or ZohoAPIKey are required.');
+        if (!isset($params['zohoClient']) && !isset($params['zohoApiKey'])) {
+            throw new \Exception('ZohoClient or ZohoAPIKey are required.');
         }
-        $this->zohoClient = ($zohoClient && $zohoClient instanceof ZohoClient) ? $zohoClient : new ZohoClient($zohoApiKey);
+
+        if (isset($params['zohoClient']) && !($params['zohoClient'] instanceof ZohoClient)) {
+            throw new \Exception('ZohoClient should be an instance of Zoho\CRM\ZohoClient.');
+        }
+
+        $this->zohoClient = (isset($params['zohoClient'])) ? $params['zohoClient'] : new ZohoClient($params['zohoApiKey']);
     }
+
+    abstract protected function getEntityName();
 
     public function save()
     {
-        $this->zohoClient->setModule(get_called_class() . 's');
+        $this->zohoClient->setModule($this->getEntityName());
         $validXML = $this->zohoClient->mapEntity($this);
         try {
             $result = $this->zohoClient->insertRecords($validXML);
@@ -102,7 +108,7 @@ abstract class ZohoRecord extends Element
         }
     }
 
-    public static function createEntity($entity, $params = null)
+    public static function createEntity($entity, $params = [])
     {
         $fullClassName = '\Zoho\CRM\Entities\\' . $entity;
         if (!class_exists($fullClassName)) {

@@ -16,6 +16,10 @@ use Zoho\CRM\Common\ZohoRecord;
  */
 class Contacts extends ZohoRecord
 {
+	protected function getEntityName()
+	{
+		return 'Contacts';
+	}
 
 	protected $First_Name;
 	protected $Last_Name;
