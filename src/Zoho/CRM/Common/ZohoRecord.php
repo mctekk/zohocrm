@@ -34,6 +34,10 @@ abstract class ZohoRecord extends Element
 
     protected $errors = [];
 
+    public $id = null;
+
+    protected $customFields = [];
+
     /**
      * ZohoRecord constructor.
      */
@@ -57,7 +61,7 @@ abstract class ZohoRecord extends Element
         $this->zohoClient->setModule($this->getEntityName());
         $validXML = $this->zohoClient->mapEntity($this);
         try {
-            $result = $this->zohoClient->insertRecords($validXML);
+            $result = $this->internalSave($validXML);
         } catch (ZohoCRMException $e) {
             $this->errors[] = $e->getMessage();
             return false;
@@ -69,11 +73,21 @@ abstract class ZohoRecord extends Element
                 return false;
             }
             // No error occurred but some issues may still happen. TODO: Add all possible error handlings
+            $this->id = $result->getRecordId();
             return true;
         }
         // Request failed
         $this->errors[] = $result->getMessage();
         return false;
+    }
+
+    protected function internalSave($validXML)
+    {
+        if ($this->id === null) {
+            return $this->zohoClient->insertRecords($validXML);
+        } else {
+            return $this->zohoClient->updateRecords($this->id, $validXML);
+        }
     }
 
     /**
@@ -105,6 +119,8 @@ abstract class ZohoRecord extends Element
     {
         if (property_exists($this, $property)) {
             $this->$property = $value;
+        } else {
+            $this->customFields[$property] = $value;
         }
     }
 

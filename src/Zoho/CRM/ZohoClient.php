@@ -501,14 +501,25 @@ class ZohoClient
         $xml .= '<row no="' . $no . '">';
         foreach ($properties as $property) {
             $propName = $property->getName();
-            $propValue = $entity->$propName;
-            if (!empty($propValue)) {
-                $xml .= '<FL val="' . str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'],
-                        $propName) . '"><![CDATA[' . $propValue . ']]></FL>';
+            if (is_array($entity->$propName)) {
+                foreach($entity->$propName as $itemPropName => $itemPropValue) {
+                    $xml .= $this->generateXmlElement($itemPropName, $itemPropValue);
+                }
+            } else {
+                $propValue = $entity->$propName;
+                if (!empty($propValue)) {
+                    $xml .= $this->generateXmlElement($propName, $propValue);
+                }
             }
         }
         $xml .= '</row>';
         $xml .= '</' . $this->module . '>';
         return $xml;
+    }
+
+    protected function generateXmlElement($name, $value)
+    {
+        return '<FL val="' . str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'],
+            $name) . '"><![CDATA[' . $value . ']]></FL>';
     }
 }
