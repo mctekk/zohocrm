@@ -231,9 +231,4 @@ class Lead extends ZohoRecord
 	 * @var string
 	 */
 	protected $Description;
-
-	public function getModuleName()
-	{
-		return 'Leads';
-	}	
 }

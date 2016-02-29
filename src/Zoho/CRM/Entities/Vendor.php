@@ -113,9 +113,4 @@ class Vendor extends ZohoRecord
 	 * @var string
 	 */
 	protected $Website;
-
-	public function getModuleName()
-	{
-		return 'Vendors';
-	}
 }

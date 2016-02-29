@@ -1,4 +1,6 @@
-<?php namespace Zoho\CRM\Entities;
+<?php
+
+namespace Zoho\CRM\Entities;
 
 use Zoho\CRM\Common\ZohoRecord;
 
@@ -197,9 +199,4 @@ class Account extends ZohoRecord
 	 * @var string
 	 */
 	protected $Description;
-
-	public function getModuleName()
-	{
-		return 'Accounts';
-	}
 }

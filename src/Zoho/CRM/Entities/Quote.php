@@ -60,9 +60,4 @@ class Quote extends ZohoRecord {
 	 * @var string
 	 */
 	protected $List_Price;
-
-	public function getModuleName()
-	{
-		return 'Quotes';
-	}
 }

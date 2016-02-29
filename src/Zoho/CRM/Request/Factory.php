@@ -12,6 +12,12 @@ use Zoho\CRM\Request\Response;
  */
 class Factory implements FactoryInterface
 {
+  /**
+   * @param $xml
+   * @param $module
+   * @param $method
+   * @return \Zoho\CRM\Request\Response
+   */
   public function createResponse($xml, $module, $method)
   {
     return new Response($xml, $module, $method);

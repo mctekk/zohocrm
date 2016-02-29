@@ -84,6 +84,9 @@ class Response
         return $this->module;
     }
 
+    /**
+     * @return string
+     */
     public function getMessage()
     {
         return $this->message;

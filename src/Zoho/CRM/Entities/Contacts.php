@@ -22,9 +22,4 @@ class Contacts extends ZohoRecord
 	protected $Account_Name;
 	protected $Email;
 	protected $Phone;
-
-	public function getModuleName()
-	{
-		return 'Contacts';
-	}
 }

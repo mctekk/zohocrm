@@ -1,6 +1,7 @@
 <?php namespace Zoho\CRM;
 
 use Zoho\CRM\Common\HttpClientInterface, Zoho\CRM\Common\FactoryInterface, Zoho\CRM\Request\HttpClient, Zoho\CRM\Request\Factory, Zoho\CRM\Wrapper\Element;
+use Zoho\CRM\Request\Response;
 
 /**
  * Client for provide interface with Zoho CRM
@@ -14,7 +15,7 @@ class ZohoClient
      *
      * @var string
      */
-    const BASE_URI = 'https://crm.zoho.com/crm/private';
+    protected $base_url;
 
     /**
      * Token used for session of request
@@ -55,15 +56,19 @@ class ZohoClient
      * Construct
      *
      * @param string $authtoken Token for connection
+     * @param string $base_url Base Url for connection
      * @param HttpClientInterface $client HttpClient for connection [optional]
      * @param FactoryInterface $factory [optional]
+     *
+     * @throws \Exception
      */
-    public function __construct($authtoken, HttpClientInterface $client = null, FactoryInterface $factory = null)
+    public function __construct($authtoken, $base_url = 'https://crm.zoho.com/crm/private', HttpClientInterface $client = null, FactoryInterface $factory = null)
     {
         if (!$authtoken) {
             throw new \Exception('ZohoAPIKey is required.');
         }
         self::setToken($authtoken);
+        $this->base_url = $base_url;
         // Only XML format is supported for the time being
         $this->format = 'xml';
         $this->client = $client ?: new HttpClient();
@@ -405,7 +410,7 @@ class ZohoClient
         if (empty($this->module)) {
             throw new \RuntimeException('Zoho CRM module is not set.');
         }
-        $parts = array(self::BASE_URI, $this->format, $this->module, $command);
+        $parts = array($this->base_url, $this->format, $this->module, $command);
         return implode('/', $parts);
     }
 

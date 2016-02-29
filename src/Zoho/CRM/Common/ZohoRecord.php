@@ -10,6 +10,9 @@ namespace Zoho\CRM\Common;
 
 use Yii;
 use yii\base\Exception;
+use Zoho\CRM\Entities\Account;
+use Zoho\CRM\Exception\UnknownEntityException;
+use Zoho\CRM\Exception\ZohoCRMException;
 use Zoho\CRM\ZohoClient;
 use Zoho\CRM\Wrapper\Element;
 
@@ -30,10 +33,7 @@ abstract class ZohoRecord extends Element
 
     private $zohoClient;
 
-    /**
-     * @var string
-     */
-    abstract public function getModuleName();
+    protected $errors = [];
 
     /**
      * ZohoRecord constructor.
@@ -48,9 +48,35 @@ abstract class ZohoRecord extends Element
 
     public function save()
     {
-        $this->zohoClient->setModule($this->getModuleName());
+        $this->zohoClient->setModule(get_called_class() . 's');
         $validXML = $this->zohoClient->mapEntity($this);
-        return $this->zohoClient->insertRecords($validXML);
+        try {
+            $result = $this->zohoClient->insertRecords($validXML);
+        } catch (ZohoCRMException $e) {
+            $this->errors[] = $e->getMessage();
+            return false;
+        }
+        if ($result->getCode() === null) {
+            // Hack for duplicated record. TODO: Find out how to handle it more appropriate
+            if ($result->getMessage() == 'Record(s) already exists') {
+                $this->errors[] = $result->getMessage();
+                return false;
+            }
+            // No error occurred but some issues may still happen. TODO: Add all possible error handlings
+            return true;
+        }
+        // Request failed
+        $this->errors[] = $result->getMessage();
+        return false;
+    }
+
+    /**
+     * Errors list
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 
     /**
@@ -74,6 +100,15 @@ abstract class ZohoRecord extends Element
         if (property_exists($this, $property)) {
             $this->$property = $value;
         }
+    }
+
+    public static function createEntity($entity, $params = null)
+    {
+        $fullClassName = '\Zoho\CRM\Entities\\' . $entity;
+        if (!class_exists($fullClassName)) {
+            throw new UnknownEntityException('No such entity found');
+        }
+        return new $fullClassName($params);
     }
 
 }
