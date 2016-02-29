@@ -14,7 +14,7 @@ use Zoho\CRM\Common\ZohoRecord;
  *
  * @package Zoho\CRM\Entities
  */
-class Contacts extends ZohoRecord
+class Contact extends ZohoRecord
 {
 	protected function getEntityName()
 	{
