@@ -3,43 +3,28 @@
 
 use Zoho\CRM\Common\ZohoRecord;
 
-class Contacts extends ZohoRecord {
+/**
+ * Class Contacts
+ *
+ * @property $First_Name
+ * @property $Last_Name
+ * @property $Account_Name
+ * @property $Email
+ * @property $Phone
+ *
+ * @package Zoho\CRM\Entities
+ */
+class Contacts extends ZohoRecord
+{
 
-	private $First_Name;
-	private $Last_Name;
-	private $Account_Name;
-	private $Email;
-	private $Phone;
+	protected $First_Name;
+	protected $Last_Name;
+	protected $Account_Name;
+	protected $Email;
+	protected $Phone;
 
-	/**
-	 * Contacts constructor.
-	 */
-	public function __construct()
+	public function getModuleName()
 	{
-		parent::__construct(ZohoRecord::MODULE_CONTACTS);
-	}
-
-	/**
-	 * Getter
-	 *
-	 * @return mixed
-	 */
-	public function __get($property)
-	{
-		return isset($this->$property)?$this->$property :null;
-	}
-
-
-	/**
-	 * Setter
-	 *
-	 * @param string $property Name of the property to set the value
-	 * @param mixed $value Value for the property
-	 * @return mixed
-	 */
-	public function __set($property, $value)
-	{
-		$this->$property = $value;
-		return $this->$property;
+		return 'Contacts';
 	}
 }

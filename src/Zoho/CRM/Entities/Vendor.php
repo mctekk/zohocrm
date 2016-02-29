@@ -6,7 +6,20 @@ use Zoho\CRM\Common\ZohoRecord;
  * Entity for Affiliates inside Zoho
  * This class only have default parameters
  *
- * @version 1.0.0
+ * @property $Vendor_Name
+ * @property $Phone
+ * @property $Email
+ * @property $Company
+ * @property $BFA
+ * @property $Status
+ * @property $Member_Number
+ * @property $Sponsor
+ * @property $City
+ * @property $State
+ * @property $Zip_Code
+ * @property $Street
+ * @property $Website
+ *
  */
 class Vendor extends ZohoRecord
 {
@@ -15,120 +28,94 @@ class Vendor extends ZohoRecord
 	 *
 	 * @var string
 	 */
-	private $Vendor_Name;
+	protected $Vendor_Name;
 
 	/**
 	 * Phone of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $Phone;
+	protected $Phone;
 
 	/**
 	 * Email of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $Email;
+	protected $Email;
 
 	/**
 	 * Company of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $Company;
+	protected $Company;
 
 	/**
 	 * Identifies if coming from finance agents
 	 *
 	 * @var boolean
 	 */
-	private $BFA;
+	protected $BFA;
 
 	/**
 	 *Status of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $Status;
+	protected $Status;
 
 	/**
 	 * Member number of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $Member_Number;
+	protected $Member_Number;
 
 	/**
 	 * Sponsor of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $Sponsor;
+	protected $Sponsor;
 
 	/**
 	 * City of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $City;
+	protected $City;
 
 	/**
 	 * State of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $State;
+	protected $State;
 
 	/**
 	 * Zip_Code of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $Zip_Code;
+	protected $Zip_Code;
 
 	/**
 	 * Street of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $Street;
+	protected $Street;
 
 	/**
 	 * Website of the Affiliates
 	 *
 	 * @var string
 	 */
-	private $Website;
+	protected $Website;
 
-	/**
-	 * Vendor constructor.
-	 */
-	public function __construct()
+	public function getModuleName()
 	{
-		parent::__construct(ZohoRecord::MODULE_VENDORS);
-	}
-
-	/**
-	 * Getter
-	 *
-	 * @return mixed
-	 */
-	public function __get($property)
-	{
-		return isset($this->$property)?$this->$property :null;
-	}
-
-	/**
-	 * Setter
-	 *
-	 * @param string $property Name of the property to set the value
-	 * @param mixed $value Value for the property
-	 * @return mixed
-	 */
-	public function __set($property, $value)
-	{
-		$this->$property = $value;
-		return $this->$property;
+		return 'Vendors';
 	}
 }

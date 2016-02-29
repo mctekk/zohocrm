@@ -58,11 +58,12 @@ class ZohoClient
      * @param HttpClientInterface $client HttpClient for connection [optional]
      * @param FactoryInterface $factory [optional]
      */
-    public function __construct($authtoken = null, HttpClientInterface $client = null, FactoryInterface $factory = null)
+    public function __construct($authtoken, HttpClientInterface $client = null, FactoryInterface $factory = null)
     {
-        if ($authtoken) {
-            self::setToken($authtoken);
+        if (!$authtoken) {
+            throw new \Exception('ZohoAPIKey is required.');
         }
+        self::setToken($authtoken);
         // Only XML format is supported for the time being
         $this->format = 'xml';
         $this->client = $client ?: new HttpClient();

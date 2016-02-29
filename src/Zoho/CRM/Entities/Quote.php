@@ -3,73 +3,66 @@
 
 use Zoho\CRM\Common\ZohoRecord;
 
+/**
+ * Class Quote
+ *
+ * @property $Subject
+ * @property $Product_Details
+ * @property $Total
+ * @property $Account_Name
+ * @property $Quantity
+ * @property $Unit_Price
+ * @property $List_Price
+ *
+ * @package Zoho\CRM\Entities
+ */
 class Quote extends ZohoRecord {
 
 	/**
 	 * Specify the name of the quote. This field is mandatory.
 	 * @var string
 	 */
-	private $Subject;
+	protected $Subject;
 
-	private $Product_Details;
+	/**
+	 * Specify the queue product details.
+	 * @var string
+	 */
+	protected $Product_Details;
 
-	private $Total;
+	/**
+	 * Specify the quote total.
+	 * @var
+	 */
+	protected $Total;
 
 	/**
 	 * Specify the account name to which the quote has to be created. This field is mandatory
 	 *
 	 * @var string
 	 */
-	private $Account_Name;
+	protected $Account_Name;
 
 	/**
 	 * Specify the quantity for which the sales order has to be generated. This field is mandatory
 	 * @var int
 	 */
-	private $Quantity;
+	protected $Quantity;
 
-	/*
+	/**
 	 * Displays the unit price of the product.
 	 * @var
 	 */
-	private $Unit_Price;
+	protected $Unit_Price;
 
 	/**
 	 * Select the product list price from Price Book or specify the product price. This field is mandatory
 	 * @var string
 	 */
-	private $List_Price;
+	protected $List_Price;
 
-	/**
-	 * Quote constructor.
-	 */
-	public function __construct()
+	public function getModuleName()
 	{
-		parent::__construct(ZohoRecord::MODULE_QUOTES);
-
-	}
-
-
-	/**
-	 * Getter
-	 *
-	 * @return mixed
-	 */
-	public function __get($property)
-	{
-		return isset($this->$property)?$this->$property :null;
-	}
-
-	/**
-	 * Setter
-	 *
-	 * @param string $property Name of the property to set the value
-	 * @param mixed $value Value for the property
-	 * @return mixed
-	 */
-	public function __set($property, $value)
-	{
-		$this->$property = $value;
-		return $this->$property;
+		return 'Quotes';
 	}
 }

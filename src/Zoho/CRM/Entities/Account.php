@@ -6,6 +6,35 @@ use Zoho\CRM\Common\ZohoRecord;
  * Entity for accounts inside Zoho
  * This class only have default parameters
  *
+ * @property $Account_Name
+ * @property $Account_Owner
+ * @property $Website
+ * @property $Ticker_Symbol
+ * @property $Parent_Account
+ * @property $Employees
+ * @property $Ownership
+ * @property $Industry
+ * @property $Account_Type
+ * @property $Account_Number
+ * @property $Account_Site
+ * @property $Phone
+ * @property $Fax
+ * @property $Email
+ * @property $Rating
+ * @property $SIC_Code
+ * @property $Annual_Revenue
+ * @property $Billing_Street
+ * @property $Billing_City
+ * @property $Billing_State
+ * @property $Billing_Code
+ * @property $Billing_Country
+ * @property $Shipping_Street
+ * @property $Shipping_City
+ * @property $Shipping_State
+ * @property $Shipping_Code
+ * @property $Shipping_Country
+ * @property $Description
+ *
  * @package Zoho\CRM\Entities
  * @version 1.0.0
  */
@@ -16,119 +45,119 @@ class Account extends ZohoRecord
 	 * 
 	 * @var string
 	 */
-	private $Account_Name;
+	protected $Account_Name;
 
 	/**
 	 * Name of the user to whom the account is assigned.
 	 * 
 	 * @var string
 	 */
-	private $Account_Owner;
+	protected $Account_Owner;
     
     /**
 	 * The URL of the company's Web site.
 	 * 
 	 * @var string
 	 */
-	private $Website;
+	protected $Website;
     
     /**
 	 * The ticker symbol of the Company.
 	 * 
 	 * @var string
 	 */
-	private $Ticker_Symbol;
+	protected $Ticker_Symbol;
     
     /**
 	 * The parent company name.
 	 * 
 	 * @var string
 	 */
-	private $Parent_Account;
+	protected $Parent_Account;
     
     /**
 	 * The number of employees in account's company.
 	 * 
 	 * @var int
 	 */
-	private $Employees;
+	protected $Employees;
     
     /**
 	 * The type of ownership of the company.
 	 * 
 	 * @var string
 	 */
-	private $Ownership;
+	protected $Ownership;
     
     /**
 	 * The type of industry of the company.
 	 * 
 	 * @var string
 	 */
-	private $Industry;
+	protected $Industry;
     
     /**
 	 * The type of account of the company.
 	 * 
 	 * @var string
 	 */
-	private $Account_Type;
+	protected $Account_Type;
     
     /**
 	 * The reference number for the account. Up to 40 characters are allowed in this field.
 	 * 
 	 * @var int
 	 */
-	private $Account_Number;
+	protected $Account_Number;
     
     /**
 	 * The name of the account’s location, for example, Headquarters or London. Up to 80 characters are allowed in this field.
 	 * 
 	 * @var string
 	 */
-	private $Account_Site;
+	protected $Account_Site;
     
     /**
 	 * The phone number of the account.
 	 * 
 	 * @var string
 	 */
-	private $Phone;
+	protected $Phone;
     
     /**
 	 * The fax number of the account.
 	 * 
 	 * @var string
 	 */
-	private $Fax;
+	protected $Fax;
     
     /**
 	 * The official E-mail address of the account.
 	 * 
 	 * @var string
 	 */
-	private $Email;
+	protected $Email;
     
     /**
 	 * The rating of the account.
 	 * 
 	 * @var string
 	 */
-	private $Rating;
+	protected $Rating;
     
     /**
 	 * The Standard Industrial Classification code of the account.
 	 * 
 	 * @var int
 	 */
-	private $SIC_Code;
-    
+	protected $SIC_Code;
+
     /**
 	 * The annual revenue of the account.
 	 * 
 	 * @var int
 	 */
-	private $Annual_Revenue;
+	protected $Annual_Revenue;
     
     /**
 	 * The billing address of the account to send the quotes, invoices, and other agreements.
@@ -140,11 +169,11 @@ class Account extends ZohoRecord
 	 *     @var string
 	 *     @var string
 	 */
-	private $Billing_Street;
-	private $Billing_City;
-	private $Billing_State;
-	private $Billing_Code;
-	private $Billing_Country;
+	protected $Billing_Street;
+	protected $Billing_City;
+	protected $Billing_State;
+	protected $Billing_Code;
+	protected $Billing_Country;
     
     /**
 	 * The shipping address of the account to deliver the shipment.
@@ -156,47 +185,21 @@ class Account extends ZohoRecord
 	 *     @var string
 	 *     @var string
 	 */
-	private $Shipping_Street;
-	private $Shipping_City;
-	private $Shipping_State;
-	private $Shipping_Code;
-	private $Shipping_Country;
+	protected $Shipping_Street;
+	protected $Shipping_City;
+	protected $Shipping_State;
+	protected $Shipping_Code;
+	protected $Shipping_Country;
     
     /**
 	 * Specify any other details about the account.
 	 * 
 	 * @var string
 	 */
-	private $Description;
+	protected $Description;
 
-	/**
-	 * Account constructor.
-	 */
-	public function __construct()
+	public function getModuleName()
 	{
-		parent::__construct(ZohoRecord::MODULE_ACCOUNTS);
+		return 'Accounts';
 	}
-
-	/**
-	 * Getter
-	 * 
-	 * @return mixed
-	 */
-	public function __get($property)
-	{
-		return isset($this->$property)?$this->$property :null;
-	}
-
-	/**
-	 * Setter
-	 *
-	 * @param string $property Name of the property to set the value
-	 * @param mixed $value Value for the property
-	 * @return mixed
-	 */
-	public function __set($property, $value)
-	{
-		$this->$property = $value;
-		return $this->$property;
-	}	
 }
