@@ -20,7 +20,7 @@ Add to your `composer.json` file
 and run
 
 ```
-composer require WondersLabCorporation/zohocrm:"dev-master"
+composer require WondersLabCorporation/zohocrm:"1.0.0"
 ```
 
 See more details at original README.MD
