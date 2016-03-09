@@ -519,7 +519,11 @@ class ZohoClient
 
     protected function generateXmlElement($name, $value)
     {
-        return '<FL val="' . str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'],
-            $name) . '"><![CDATA[' . $value . ']]></FL>';
+        return '<FL val="' . $this->generateXmlElementName($name) . '"><![CDATA[' . $value . ']]></FL>';
+    }
+
+    protected function generateXmlElementName($name)
+    {
+        return  str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'], $name);
     }
 }

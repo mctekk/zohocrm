@@ -6,6 +6,10 @@
     "license": "MIT",
     "authors": [
         {
+            "name": "Dmitriy Raschepkin",
+            "email": "dmitriy.raschepkin@gmail.com"
+        },
+        {
             "name": "Vojislav Jovanovic",
             "email": "vaish@vjovanovic.com",
             "homepage": "https://github.com/vaish/zohocrm-php"

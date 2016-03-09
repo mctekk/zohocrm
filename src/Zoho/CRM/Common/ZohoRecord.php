@@ -12,6 +12,7 @@ use Yii;
 use Zoho\CRM\Entities\Account;
 use Zoho\CRM\Exception\UnknownEntityException;
 use Zoho\CRM\Exception\ZohoCRMException;
+use Zoho\CRM\Request\Response;
 use Zoho\CRM\ZohoClient;
 use Zoho\CRM\Wrapper\Element;
 
@@ -52,12 +53,29 @@ abstract class ZohoRecord extends Element
         }
 
         $this->zohoClient = (isset($params['zohoClient'])) ? $params['zohoClient'] : new ZohoClient($params['zohoApiKey']);
+        if (isset($params['zohoClient'])) {
+            unset($params['zohoClient']);
+        }
+        if (isset($params['zohoApiKey'])) {
+            unset($params['zohoApiKey']);
+        }
+        $this->load($params);
+    }
+
+    protected function load($properties)
+    {
+        foreach ($properties as $key => $property) {
+            if (property_exists($this, $key)) {
+                $this->$key = $property;
+            }
+        }
     }
 
     abstract protected function getEntityName();
 
     public function save()
     {
+        $this->errors = [];
         $this->zohoClient->setModule($this->getEntityName());
         $validXML = $this->zohoClient->mapEntity($this);
         try {
@@ -126,11 +144,85 @@ abstract class ZohoRecord extends Element
 
     public static function createEntity($entity, $params = [])
     {
-        $fullClassName = '\Zoho\CRM\Entities\\' . $entity;
-        if (!class_exists($fullClassName)) {
-            throw new UnknownEntityException('No such entity found');
-        }
+        $fullClassName = static::getFullEntityClass($entity, true);
         return new $fullClassName($params);
     }
 
+    public static function getEntity($entity, $params = [])
+    {
+
+        $entityItem = static::createEntity($entity, $params);
+        $entityItem->errors = [];
+        if (!$entityItem->loadEntity()) {
+            // TODO: consider what to do. Throw an exception with errors probably
+        }
+        return $entityItem;
+    }
+
+    public static function getFullEntityClass($entity, $throwException = false)
+    {
+        $fullClassName = '\Zoho\CRM\Entities\\' . $entity;
+        if (!class_exists($fullClassName)) {
+            if ($throwException) {
+                throw new UnknownEntityException('No such entity found');
+            } else {
+                return null;
+            }
+        }
+        return $fullClassName;
+    }
+
+    protected function loadEntity()
+    {
+        if (empty($this->id)) {
+            throw new \Exception('An ID must be provided to load data from Zoho');
+        }
+        // TODO: Consider adding params
+        $this->zohoClient->setModule($this->getEntityName());
+        try {
+            $response = $this->zohoClient->getRecordById($this->id);
+        } catch (ZohoCRMException $e) {
+            $this->errors[] = $e->getMessage();
+            return false;
+        }
+
+        if ($response->getCode() !== null) {
+            // Request failed
+            $this->errors[] = $response->getMessage();
+            return false;
+        }
+        // No error occurred but some issues may still happen. TODO: Add all possible error handlings
+        $mappedRecords = $this->mapEntityNames($response);
+        $properties = $mappedRecords[1];
+        $this->load($properties);
+        return true;
+    }
+
+    protected function generatePropertyName($XmlName)
+    {
+        // TODO: Check why $, _, etc. are needed in the replace list. @see ZohoClient->generateXmlElementName
+//        return  str_replace([' ', '$', '_', 'and', '?'], ['_', 'N36', 'E5F', '&', '98T'], $XmlName);
+        return  str_replace(' ', '_', $XmlName);
+    }
+
+    /**
+     * Convert entity property names from XML to PHP format
+     *
+     * @param Response $response
+     * @return array mapped records
+     * @throws \Exception
+     */
+    protected function mapEntityNames(Response $response)
+    {
+        $records = [];
+        foreach ($response->getRecords() as $index => $record) {
+            $records[$index] = [];
+            foreach ($record as $entityXmlProperty => $value) {
+                $propName = $this->generatePropertyName($entityXmlProperty);
+                $records[$index][$propName] = $value;
+            }
+        }
+
+        return $records;
+    }
 }
