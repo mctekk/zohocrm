@@ -33,9 +33,18 @@ abstract class ZohoRecord extends Element
 
     private $zohoClient;
 
+    /**
+     * @var array Zoho API call additional params
+     */
+    protected $zohoParams = [];
+    /**
+     * @var array properties to exclude from Zoho API call XML data
+     */
+    protected $excludes = ['excludes', 'zohoParams'];
+
     protected $errors = [];
 
-    public $id = null;
+    protected $id = null;
 
     protected $customFields = [];
 
@@ -77,7 +86,7 @@ abstract class ZohoRecord extends Element
     {
         $this->errors = [];
         $this->zohoClient->setModule($this->getEntityName());
-        $validXML = $this->zohoClient->mapEntity($this);
+        $validXML = $this->zohoClient->mapEntity($this, $this->excludes);
         try {
             $result = $this->internalSave($validXML);
         } catch (ZohoCRMException $e) {
@@ -102,9 +111,9 @@ abstract class ZohoRecord extends Element
     protected function internalSave($validXML)
     {
         if ($this->id === null) {
-            return $this->zohoClient->insertRecords($validXML);
+            return $this->zohoClient->insertRecords($validXML, $this->zohoParams);
         } else {
-            return $this->zohoClient->updateRecords($this->id, $validXML);
+            return $this->zohoClient->updateRecords($this->id, $validXML, $this->zohoParams);
         }
     }
 

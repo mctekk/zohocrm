@@ -478,12 +478,13 @@ class ZohoClient
      * Convert an entity into XML
      *
      * @param Element $entity Element with values on fields setted
+     * @param array $excludes list of attributes to exclude
      * @return string XML created
      * @throws \Exception
      * @todo
     - Add iteration for multiples entities and creation of xml with collection
      */
-    public function mapEntity(Element $entity)
+    public function mapEntity(Element $entity, array $excludes = [])
     {
         if (empty($this->module)) {
             throw new \Exception("Invalid module, it must be setted before map the entity", 1);
@@ -496,6 +497,10 @@ class ZohoClient
         $xml .= '<row no="' . $no . '">';
         foreach ($properties as $property) {
             $propName = $property->getName();
+            if (in_array($propName, $excludes)) {
+                // Continue to the next property if current one is in excludes list
+                continue;
+            }
             if (is_array($entity->$propName)) {
                 foreach($entity->$propName as $itemPropName => $itemPropValue) {
                     $xml .= $this->generateXmlElement($itemPropName, $itemPropValue);
