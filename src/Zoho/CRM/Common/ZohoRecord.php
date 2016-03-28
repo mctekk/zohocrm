@@ -237,6 +237,8 @@ abstract class ZohoRecord extends Element
     
     /**
      * Implements deleteRecords API method.
+     * 
+     * @return boolean
      */
     public function delete()
     {

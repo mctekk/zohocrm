@@ -26,5 +26,5 @@ class Contact extends ZohoRecord
 	protected $Account_Name;
 	protected $Email;
 	protected $Phone;
-        protected $Contact_Owner;
+	protected $Contact_Owner;
 }
