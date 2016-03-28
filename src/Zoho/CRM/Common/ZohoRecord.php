@@ -234,4 +234,18 @@ abstract class ZohoRecord extends Element
 
         return $records;
     }
+    
+    /**
+     * Implements deleteRecords API method.
+     */
+    public function delete()
+    {
+        $response = $this->zohoClient->deleteRecords($this->id);
+        if ($response->getCode() !== null) {
+            // Request failed
+            $this->errors[] = $response->getMessage();
+            return false;
+        }
+        return true;
+    }
 }
