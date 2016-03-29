@@ -93,7 +93,7 @@ abstract class ZohoRecord extends Element
             $this->errors[] = $e->getMessage();
             return false;
         }
-        if ($result->getCode() === null) {
+        if ($result->isOk()) {
             // Hack for duplicated record. TODO: Find out how to handle it more appropriate
             if ($result->getMessage() == 'Record(s) already exists') {
                 $this->errors[] = $result->getMessage();
@@ -195,7 +195,7 @@ abstract class ZohoRecord extends Element
             return false;
         }
 
-        if ($response->getCode() !== null) {
+        if (!$response->isOk()) {
             // Request failed
             $this->errors[] = $response->getMessage();
             return false;
@@ -244,8 +244,7 @@ abstract class ZohoRecord extends Element
     {
         $this->zohoClient->setModule($this->getEntityName());
         $response = $this->zohoClient->deleteRecords($this->id);
-        // TODO: find out what error codes can be here
-        if ($response->getCode() !== null && $response->getCode() !== '5000') {
+        if (!$response->isOk()) {
             // Request failed
             $this->errors[] = $response->getMessage();
             return false;

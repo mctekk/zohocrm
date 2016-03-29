@@ -1,6 +1,7 @@
 <?php namespace Zoho\CRM\Request;
 
 use Zoho\CRM\Exception\ZohoCRMException;
+use Zoho\CRM\ZohoClient;
 
 /**
  * Zoho CRM API Response.
@@ -120,6 +121,11 @@ class Response
     public function getXML()
     {
         return $this->xmlstr;
+    }
+    
+    public function isOk()
+    {
+        return !in_array($this->getCode(), ZohoClient::errorCodes());
     }
 
     public function getResponse()
