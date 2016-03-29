@@ -242,8 +242,10 @@ abstract class ZohoRecord extends Element
      */
     public function delete()
     {
+        $this->zohoClient->setModule($this->getEntityName());
         $response = $this->zohoClient->deleteRecords($this->id);
-        if ($response->getCode() !== null) {
+        // TODO: find out what error codes can be here
+        if ($response->getCode() !== null && $response->getCode() !== '5000') {
             // Request failed
             $this->errors[] = $response->getMessage();
             return false;
