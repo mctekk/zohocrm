@@ -1,10 +1,14 @@
 {
-    "name": "mctekk/zohocrm",
+    "name": "WondersLabCorporation/zohocrm",
     "type": "library",
     "description": "Wrapper for interact with Zoho CRM API for php",
     "keywords": ["Zoho CRM API PHP Wrapper"],
     "license": "MIT",
     "authors": [
+        {
+            "name": "Dmitriy Raschepkin",
+            "email": "dmitriy.raschepkin@gmail.com"
+        },
         {
             "name": "Vojislav Jovanovic",
             "email": "vaish@vjovanovic.com",
@@ -29,7 +33,7 @@
             "src/"
         ],
         "psr-0": {
-            "Zoho\\": "mctekk/zohocrm/src/"
+            "Zoho\\": "WondersLabCorporation/zohocrm/src/"
         }
     },
     "require-dev": {

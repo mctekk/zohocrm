@@ -1,50 +1,82 @@
 <?php namespace Zoho\CRM\Entities;
 
-use Zoho\CRM\Wrapper\Element;
+use Zoho\CRM\Common\ZohoRecord;
 
 /**
  * Entity for leads inside Zoho
  * This class only have default parameters
  *
+ * @property $Lead_Owner
+ * @property $Salutation
+ * @property $First_Name
+ * @property $Title
+ * @property $Last_Name
+ * @property $Company
+ * @property $Lead_Source
+ * @property $Industry
+ * @property $Annual_Revenue
+ * @property $Phone
+ * @property $Mobile
+ * @property $Fax
+ * @property $Email
+ * @property $Secondary_Email
+ * @property $Skype_ID
+ * @property $Website
+ * @property $Lead_Status
+ * @property $Rating
+ * @property $No_of_Employees
+ * @property $Email_Opt_Out
+ * @property $Campaign_Source
+ * @property $Street
+ * @property $City
+ * @property $State
+ * @property $Zip_Code
+ * @property $Country
+ * @property $Description
+ *
  * @package Zoho\CRM\Entities
  * @version 1.0.0
  */
-class Lead extends Element 
+class Lead extends ZohoRecord
 {
+	protected function getEntityName()
+	{
+		return 'Leads';
+	}
 	/**
 	 * Zoho CRM user to whom the Lead is assigned.
 	 * 
 	 * @var string
 	 */
-	public $Lead_Owner;
+	protected $Lead_Owner;
 
 	/**
 	 * Salutation for the lead
 	 * 
 	 * @var string
 	 */
-	public $Salutation;
+	protected $Salutation;
 
 	/**
 	 * First name of the lead
 	 * 
 	 * @var string
 	 */
-	public $First_Name;
+	protected $First_Name;
 
 	/**
 	 * The job position of the lead
 	 * 
 	 * @var string
 	 */
-	public $Title;
+	protected $Title;
 
 	/**
 	 * Last name of the lead
 	 * 
 	 * @var string
-	 */	
-	public $Last_Name;
+	 */
+	protected $Last_Name;
 
 	/**
 	 * Name of the company where the lead is working. 
@@ -52,63 +84,63 @@ class Lead extends Element
 	 * 
 	 * @var string
 	 */
-	public $Company;
+	protected $Company;
 
 	/**
 	 * Source of the lead, that is, from where the lead is generated
 	 * 
 	 * @var string
 	 */
-	public $Lead_Souce;
+	protected $Lead_Source;
 
 	/**
 	 * Industry to which the lead belongs
 	 * 
 	 * @var string
 	 */
-	public $Industry;
+	protected $Industry;
 
 	/**
 	 * Annual revenue of the company where the lead is working
 	 * 
 	 * @var integer
 	 */
-	public $Annual_Revenue;
+	protected $Annual_Revenue;
 
 	/**
 	 * Phone number of the lead
 	 * 
 	 * @var string
 	 */
-	public $Phone;
+	protected $Phone;
 
 	/**
 	 * Modile number of the lead
 	 * 
 	 * @var string
-	 */	
-	public $Mobile;
+	 */
+	protected $Mobile;
 
 	/**
 	 * Fax number of the lead
 	 * 
 	 * @var string
-	 */	
-	public $Fax;
+	 */
+	protected $Fax;
 
 	/**
 	 * Email address of the lead
 	 * 
 	 * @var string
-	 */	
-	public $Email;
+	 */
+	protected $Email;
 
 	/**
 	 * Secundary email address of the lead
 	 * 
 	 * @var string
-	 */	
-	public $Secundary_Email;
+	 */
+	protected $Secondary_Email;
 
 	/**
 	 * Skype ID of the lead. Currently skype ID 
@@ -116,35 +148,35 @@ class Lead extends Element
 	 * 
 	 * @var string
 	 */
-	public $Skype_ID;
+	protected $Skype_ID;
 
 	/**
 	 * Web site of the lead
 	 * 
 	 * @var string
 	 */
-	public $Website;
+	protected $Website;
 
 	/**
 	 * Status of the lead
 	 * 
 	 * @var string
 	 */
-	public $Lead_Status;
+	protected $Lead_Status;
 
 	/**
 	 * Rating of the lead
 	 * 
 	 * @var string
 	 */
-	public $Rating;
+	protected $Rating;
 
 	/**
 	 * Number of employees in lead's company
 	 * 
 	 * @var integer
 	 */
-	public $No_of_Employees;
+	protected $No_of_Employees;
 
 	/**
 	 * Remove leads from your mailing list so that they will 
@@ -152,77 +184,54 @@ class Lead extends Element
 	 * 
 	 * @var string
 	 */
-	public $Email_Opt_Out;
+	protected $Email_Opt_Out;
 
 	/**
 	 * Campaign related to the Lead
 	 * 
 	 * @var string
 	 */
-	public $Campaing_Source;
+	protected $Campaign_Source;
 
 	/**
 	 * Street address of the lead
 	 * 
 	 * @var string
 	 */
-	public $Street;
+	protected $Street;
 
 	/**
 	 * Name of the city where the lead lives
 	 * 
 	 * @var string
 	 */
-	public $City;
+	protected $City;
 
 	/**
 	 * Name of the state where the lead lives
 	 * 
 	 * @var string
 	 */
-	public $State;
+	protected $State;
 
 	/**
 	 * Postal code of the lead's address
 	 * 
 	 * @var string
 	 */
-	public $Zip_Code;
+	protected $Zip_Code;
 
 	/**
 	 * Name of the lead's country
 	 * 
 	 * @var string
 	 */
-	public $Country;
+	protected $Country;
 
 	/**
 	 * Other details about the lead
 	 * 
 	 * @var string
 	 */
-	public $Description;
-
-	/**
-	 * Getter
-	 * 
-	 * @return mixed
-	 */
-	public function __get($property)
-	{
-		return isset($this->$property)?$this->$property :null;
-	}
-
-	/**
-	 * Setter
-	 *
-	 * @param string $property Name of the property to set the value
-	 * @param mixed $value Value for the property
-	 * @return mixed
-	 */
-	public function __set($property, $value)
-	{
-		$this->$property = $value;
-		return $this->$property;
-	}	
+	protected $Description;
 }
