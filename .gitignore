@@ -3,3 +3,5 @@ phpunit.xml
 composer.phar
 composer.lock
 vendor/
+._*
+tests/_output/*

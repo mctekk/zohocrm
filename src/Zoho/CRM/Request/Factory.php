@@ -1,4 +1,6 @@
-<?php namespace Zoho\CRM\Request;
+<?php
+
+namespace Zoho\CRM\Request;
 
 use Zoho\CRM\Common\FactoryInterface;
 use Zoho\CRM\Request\Response;
@@ -12,8 +14,8 @@ use Zoho\CRM\Request\Response;
  */
 class Factory implements FactoryInterface
 {
-  public function createResponse($xml, $module, $method)
-  {
-    return new Response($xml, $module, $method);
-  }
+    public function createResponse($xml, $module, $method)
+    {
+        return new Response($xml, $module, $method);
+    }
 }

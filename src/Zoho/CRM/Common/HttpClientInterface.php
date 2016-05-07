@@ -1,4 +1,6 @@
-<?php namespace Zoho\CRM\Common;
+<?php
+
+namespace Zoho\CRM\Common;
 
 /**
  * Common interface for Http clients
@@ -8,11 +10,11 @@
  */
 interface HttpClientInterface
 {
-  /**
-   * Performs POST request.
-   *
-   * @param string $uri Direction to make the post
-   * @param string $postBody Post data
-   */
-  public function post($uri, $postBody);
+    /**
+     * Performs POST request.
+     *
+     * @param string $uri Direction to make the post
+     * @param string $postBody Post data
+     */
+    public function post($uri, $postBody);
 }

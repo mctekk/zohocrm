@@ -18,6 +18,10 @@
         {
             "name": "Sparo Hawk",
             "homepage": "https://github.com/mctekk/zohocrm"            
+        },
+        {
+            "name": "Kaioken",
+            "homepage": "https://github.com/mctekk/zohocrm"            
         }
     ],
     "require": {
@@ -25,14 +29,29 @@
         "ext-curl": "*"
     },
     "autoload": {
-        "classmap": [
-            "src/"
-        ],
-        "psr-0": {
-            "Zoho\\": "mctekk/zohocrm/src/"
+        "psr-4": {
+            "Zoho\\CRM\\Common\\": "src/Zoho/Common/",
+            "Zoho\\CRM\\Config\\": "src/Zoho/Config/",
+            "Zoho\\CRM\\Entities\\": "src/Zoho/Entities/",
+            "Zoho\\CRM\\Exception\\": "src/Zoho/Exception/",
+            "Zoho\\CRM\\Request\\": "src/Zoho/Request/",
+            "Zoho\\CRM\\Wrapper\\": "src/Zoho/Wrapper/",
+            "Zoho\\CRM\\": "src/Zoho/CRM/"
         }
     },
+     "autoload-dev": {
+        "psr-4": {
+           "Zoho\\CRM\\Common\\": "src/Zoho/Common/",
+            "Zoho\\CRM\\Config\\": "src/Zoho/Config/",
+            "Zoho\\CRM\\Entities\\": "src/Zoho/Entities/",
+            "Zoho\\CRM\\Exception\\": "src/Zoho/Exception/",
+            "Zoho\\CRM\\Request\\": "src/Zoho/Request/",
+            "Zoho\\CRM\\Wrapper\\": "src/Zoho/Wrapper/",
+            "Zoho\\CRM\\": "src/Zoho/CRM/"
+
+        }
+    } ,
     "require-dev": {
-        "phpunit/phpunit": "3.7.*"
+        "codeception/verify": "*"
     }
 }
