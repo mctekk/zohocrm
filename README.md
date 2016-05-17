@@ -30,7 +30,7 @@ Let's start
 The first thing that you have to do is use the namespaces for access to all the classes of the package, then, there are two fases for begin with the interaction:
 
 1. Wrap values from array to entity, this have restrictions for the names of the fields, continue reading
-2. If you already have your entity with values, just jump to [Mapping XML to entities elements](https://github.com/frangeris/zohocrm-php#mapping-xml-to-entities-elements)
+2. If you already have your entity with values, just jump to [Mapping XML to entities elements](#mapping-xml-to-entities-elements)
 
 ```php
 <?php
@@ -140,7 +140,7 @@ $xvsel = '
 </Lead>';
 
 $lead = new Lead();
-$lead->deserializeXml($xvsel))
+if($lead->deserializeXml($xvsel))
 {
 	// Nice, now you have the entity with the values loaded from a string, F**k yeah..!
 	/* Remember that you can set more parameters to the entity
@@ -151,7 +151,7 @@ $lead->deserializeXml($xvsel))
 	echo 'Success, continue using your entity, the xvsel was parsed great...!';
 }else
 	echo 'The xml could not be parsed, please check the syntax';
-
+}
 ```
 Now the next part is interact with zoho api using the client, first thing, create a `ZohoClient` with your authtoken valid: **Set the module**, for now just Leads, on future or contributing the [missing modules](https://www.zoho.com/crm/help/api/modules-fields.html)
 

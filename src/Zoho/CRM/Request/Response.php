@@ -145,7 +145,7 @@ class Response
         if (isset($xml->error)) {
             $message = (string) $xml->error->message;
             $code = (string) $xml->error->code;
-            throw new ZohoCRMException($message, $code);
+            throw new ZohoCRMException((string) $xml['uri'] . ' ' . $message, $code);
         }
 
         $this->uri = (string) $xml['uri'];

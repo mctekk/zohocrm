@@ -11,6 +11,29 @@ namespace Zoho\CRM\Wrapper;
 abstract class Element
 {
     /**
+     * Getter
+     *
+     * @return mixed
+     */
+    public function __get($property)
+    {
+        return isset($this->$property) ? $this->$property : null;
+    }
+
+    /**
+     * Setter
+     *
+     * @param string $property Name of the property to set the value
+     * @param mixed $value Value for the property
+     * @return mixed
+     */
+    public function __set($property, $value)
+    {
+        $this->$property = $value;
+        return $this->$property;
+    }
+
+    /**
      * The deserialize method is called during xml parsing,
      * create an object of the xml received based on the entity
      * called

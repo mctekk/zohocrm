@@ -238,6 +238,34 @@ class ZohoClient
     }
 
     /**
+     * Implements searchRecords API method.
+     *
+     * @param string $searchCondition search condition in the format (((Last Name:Steve)AND(Company:Zillum))OR(Lead Status:Contacted))
+     *
+     * @param array $params           request parameters
+     *                                selectColumns String  Module(columns) e.g. Leads(Last Name,Website,Email)
+     *                                                      Note: do not use any extra spaces when listing column names
+     *                                fromIndex        Integer    Default value 1
+     *                                toIndex          Integer    Default value 20
+     *                                                      Maximum value 200
+     *                                newFormat     Integer 1 (default) - exclude fields with null values in the response
+     *                                                      2 - include fields with null values in the response
+     *                                version       Integer 1 (default) - use earlier API implementation
+     *                                                      2 - use latest API implementation
+     *
+     * @return Response The Response object
+     */
+    public function searchRecords($criteria, $params = array(), $options = array())
+    {
+        $params['criteria'] = $criteria;
+        if (empty($params['selectColumns'])) {
+            $params['selectColumns'] = 'All';
+        }
+
+        return $this->call('searchRecords', $params);
+    }
+
+    /**
      * Implements getUsers API method.
      *
      *  @param string  $type       type of the user to return. Possible values:

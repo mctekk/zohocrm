@@ -47,6 +47,6 @@ class ZohoCRMException extends \Exception
             throw new \Exception("Unknown Zoho CRM error code: $code");
         }
 
-        parent::__construct($this->errorMessages[$code], $code);
+        parent::__construct($message . ' ' . $this->errorMessages[$code], $code);
     }
 }
