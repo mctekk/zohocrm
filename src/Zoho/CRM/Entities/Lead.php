@@ -61,7 +61,7 @@ class Lead extends Element
      *
      * @var string
      */
-    public $Lead_Souce;
+    public $Lead_Source;
 
     /**
      * Industry to which the lead belongs
