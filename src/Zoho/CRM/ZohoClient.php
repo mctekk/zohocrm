@@ -352,7 +352,7 @@ class ZohoClient
             }
 
             $params['id'] = $id;
-        }return $this->call('updateRecords', $params, $data);
+        }return $this->call('updateRecords', $params, $data, $options);
     }
 
     /**
