@@ -63,11 +63,12 @@ abstract class Element
      * @param array $fields Fields to convert
      * @return string
      * @todo
-    - Verify if the property exist on entity before send to zoho
+     * - Verify if the property exist on entity before send to zoho
      */
     final public function serializeXml(array $fields)
     {
-        $output = '<Lead>';
+        $className = $this->stripNamespaceFromClassName($this);
+        $output = '<' . $className . '>';
         foreach ($fields as $key => $value) {
             if (empty($value)) {
                 continue;
@@ -75,7 +76,25 @@ abstract class Element
             // Unnecessary fields
             $key = str_replace(' ', '_', ucwords(str_replace(['_', '$', '%5F', '?'], [' ', 'N36', 'E5F', '98T'], $key)));
             $output .= '<' . $key . '>' . htmlspecialchars($value) . '</' . $key . '>';
-        }$output .= '</Lead>';
+        }
+        $output .= '</' . $className . '>';
         return $output;
     }
+
+    /**
+     * Strip the namespace from the class to get the actual class name
+     *
+     * @param object $obj
+     * @return string
+     * @access private
+     */
+    private function stripNamespaceFromClassName($obj)
+    {
+        $classname = get_class($obj);
+        if (preg_match('@\\\\([\w]+)$@', $classname, $matches)) {
+            $classname = $matches[1];
+        }
+        return $classname;
+    }
+
 }
