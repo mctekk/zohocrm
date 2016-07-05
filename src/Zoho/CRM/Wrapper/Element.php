@@ -91,10 +91,7 @@ abstract class Element
     private function stripNamespaceFromClassName($obj)
     {
         $classname = get_class($obj);
-        if (preg_match('@\\\\([\w]+)$@', $classname, $matches)) {
-            $classname = $matches[1];
-        }
-        return $classname;
+        return substr($className, strrpos($className, '\\') + 1);
     }
 
 }
