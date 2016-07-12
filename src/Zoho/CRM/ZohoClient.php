@@ -523,7 +523,7 @@ class ZohoClient
         foreach ($properties as $property) {
             $propName = $property->getName();
             $propValue = $entity->$propName;
-            if (!empty($propValue)) {
+            if ($propValue !== null) {
                 $xml .= '<FL val="' . str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'], $propName) . '"><![CDATA[' . $propValue . ']]></FL>';
             }
 
