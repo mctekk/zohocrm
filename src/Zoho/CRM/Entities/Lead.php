@@ -106,11 +106,11 @@ class Lead extends Element
     public $Email;
 
     /**
-     * Secundary email address of the lead
+     * Secondary email address of the lead
      *
      * @var string
      */
-    public $Secundary_Email;
+    public $Secondary_Email;
 
     /**
      * Skype ID of the lead. Currently skype ID
@@ -161,7 +161,7 @@ class Lead extends Element
      *
      * @var string
      */
-    public $Campaing_Source;
+    public $Campaign_Source;
 
     /**
      * Street address of the lead
