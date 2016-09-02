@@ -504,31 +504,86 @@ class ZohoClient
     /**
      * Convert an entity into XML
      *
-     * @param Element $entity Element with values on fields setted
+     * @param Element $entity     Element
+     * @param string  $entityName Element name
      * @return string XML created
-     * @todo
-    - Add iteration for multiples entities and creation of xml with collection
+     * @throws \Exception
      */
-    public function mapEntity(Element $entity)
+    public function mapEntity($entity, $entityName = null)
     {
-        if (empty($this->module)) {
-            throw new \Exception("Invalid module, it must be setted before map the entity", 1);
+        // It's module entity
+        if (is_null($entityName)) {
+            if (empty($this->module)) {
+                throw new \Exception('Module not set');
+            }
+            $entityName = $this->module;
+            $entity = [$entity];
         }
 
+        $xml = '<' . $entityName . '>';
+        $xml .= is_array($entity) ? $this->mapEntityList($entity) : $this->mapSingleEntity($entity);
+        $xml .= '</' . $entityName . '>';
+        return $xml;
+    }
+
+    /**
+     * Convert single entity into XML
+     *
+     * @param Element $entity Element
+     * @return string XML created
+     */
+    protected function mapSingleEntity(Element $entity)
+    {
         $element = new \ReflectionObject($entity);
         $properties = $element->getProperties();
-        $no = 1;
-        $xml = '<' . $this->module . '>';
-        $xml .= '<row no="' . $no . '">';
+        $xml = '';
         foreach ($properties as $property) {
             $propName = $property->getName();
             $propValue = $entity->$propName;
             if ($propValue !== null) {
-                $xml .= '<FL val="' . str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'], $propName) . '"><![CDATA[' . $propValue . ']]></FL>';
+                $xml .= '<FL val="' . str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'], $propName) . '">';
+                // It's a list of entities
+                if (is_array($propValue)) {
+                    $tag = null;
+                    list($key, $list) = each($propValue);
+                    if (!is_numeric($key)) {
+                        $tag = $key;
+                        $propValue = $list;
+                    }
+                    $xml .= $this->mapEntityList($propValue, $tag);
+                }
+                // It's an entity
+                elseif (is_object($propValue)) {
+                    $xml .= $this->mapSingleEntity($propValue);
+                }
+                else {
+                    $xml .= '<![CDATA[' . $propValue . ']]>';
+                }
+                $xml .= '</FL>';
             }
+        }
+        return $xml;
+    }
 
-        }$xml .= '</row>';
-        $xml .= '</' . $this->module . '>';
+    /**
+     * Convert list of entities into XML
+     *
+     * @param array  $list           List of Elements
+     * @param string $rowElementName Element name
+     * @return string XML $list
+     */
+    protected function mapEntityList(array $list, $rowElementName = null)
+    {
+        if (is_null($rowElementName)) {
+            $rowElementName = 'row';
+        }
+        $xml = '';
+        $no = 1;
+        foreach ($list as $element) {
+            $xml .= '<' . $rowElementName . ' no="' . $no++ . '">';
+            $xml .= $this->mapSingleEntity($element);
+            $xml .= "</$rowElementName>";
+        }
         return $xml;
     }
 }
