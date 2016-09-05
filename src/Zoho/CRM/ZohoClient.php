@@ -553,11 +553,11 @@ class ZohoClient
                     $xml .= $this->mapEntityList($propValue, $tag);
                 }
                 // It's an entity
-                elseif (is_object($propValue)) {
+                elseif (is_object($propValue) && (!$propValue instanceof \DateTime)) {
                     $xml .= $this->mapSingleEntity($propValue);
                 }
                 else {
-                    $xml .= '<![CDATA[' . $propValue . ']]>';
+                    $xml .= '<![CDATA[' . (string) $propValue . ']]>';
                 }
                 $xml .= '</FL>';
             }

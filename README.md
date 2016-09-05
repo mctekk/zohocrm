@@ -174,3 +174,22 @@ $response = $ZohoClient->insertRecords($validXML);
 The object Response returned in located in `Zoho\CRM\Request`, contain the code, message, method, module, records, record id, uri and xml returned by zoho, this can be accessed by getters.
 
 Hope that can be useful :)
+
+---
+
+Added support for embedded entities/objects
+
+Example [source https://www.zoho.com/crm/help/api/insertrecords.html#SalesOrders](source https://www.zoho.com/crm/help/api/insertrecords.html#SalesOrders):
+```php
+$product = new Product;
+$product->Product_Id = 2000000017001;
+$productDetail->Unit_Price = 10.0;
+$productDetail->Quantity   = 1.0;
+$productDetail->Total      = 123.0;
+$productDetail->Discount   = 1.23;
+$productDetail->List_Price = 123.0;
+$productDetail->Net_Total  = 121.77;
+
+
+$salesOrder->Product_Details = ['product' => [$product]];
+```
