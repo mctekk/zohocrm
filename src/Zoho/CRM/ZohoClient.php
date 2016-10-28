@@ -15,6 +15,16 @@ use Zoho\CRM\Wrapper\Element;
  */
 class ZohoClient
 {
+
+    /**
+    * Defined the module names
+    *
+    * @var string
+    */
+    const MODULE_LEADS = 'Leads';
+    const MODULE_CONTACTS = 'Contacts';
+    const MODULE_ACCOUNTS = 'Accounts';
+  
     /**
      * URL for call request
      *
