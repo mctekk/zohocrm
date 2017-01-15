@@ -101,7 +101,7 @@ class ZohoClient
     public function convertLead($leadId, $data, $params = array(), $options = array())
     {
         $params['leadId'] = $leadId;
-        return $this->call('convertLead', $params, $data);
+        return $this->call('convertLead', $params, $data, $options);
     }
 
     /**
