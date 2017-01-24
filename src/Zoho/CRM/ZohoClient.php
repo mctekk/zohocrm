@@ -390,6 +390,9 @@ class ZohoClient
         }
         $params['id'] = $id;
         $params['content'] = $content;
+        if (function_exists('curl_file_create')) { // php 5.6+
+            $params['content'] = curl_file_create($content);
+        }
         return $this->call('uploadFile', $params);
     }
 
