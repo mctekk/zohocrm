@@ -164,6 +164,14 @@ $ZohoClient->setModule('Leads'); // Set the module
 $validXML = $ZohoClient->mapEntity($lead); // Entity lead created with $xvsel
 ```
 
+Users of the .eu domain (i.e. your CRM URL is crm.zoho.eu, rather than crm.zoho.com) should call `setEuDomain()` after instantiating ZohoClient, i.e.
+
+```php
+$ZohoClient = new ZohoClient('YOUR_TOKEN'); // Make the connection to zoho api
+$ZohoClient->setEuDomain();
+$ZohoClient->setModule('Leads'); // Set the module
+```
+
 The last part if make the call, `$validXML` content returned by `mapEntity(Lead $lead)` is gonna be the xml that will be send to zoho, this is the final string created before the call to ws
 
 Now make the call to ws and get the response object:
