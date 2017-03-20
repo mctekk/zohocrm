@@ -178,7 +178,8 @@ class ZohoClient
     /**
      * Implements getRecordById API method.
      *
-     * @param string $id      Id of the record
+     * @param mixed $id       Id of the record if string or list of ids if an array
+     *                          a list will be passed as the parameter idlist
      * @param array $params   request parameters
      *                        newFormat 1 (default) - exclude fields with null values in the response
      *                                  2 - include fields with null values in the response
@@ -189,7 +190,11 @@ class ZohoClient
      */
     public function getRecordById($id, $params = array(), $options = array())
     {
-        $params['id'] = $id;
+        if (is_array($id)) {
+            $params['idlist'] = implode(";",$id);
+        } else {
+            $params['id'] = $id;
+        }
         return $this->call('getRecordById', $params);
     }
 
