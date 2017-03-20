@@ -33,6 +33,13 @@ class ZohoClient
     const BASE_URI = 'https://crm.zoho.com/crm/private';
 
     /**
+     * URL for call request in zoho.eu
+     *
+     * @var string
+     */
+    const BASE_URI_EU = 'https://crm.zoho.eu/crm/private';
+
+    /**
      * Token used for session of request
      *
      * @var string
@@ -67,6 +74,12 @@ class ZohoClient
      */
     protected $module;
 
+    /** Base URI for selected domain
+     *
+     * @var string
+     */
+    protected $baseUri;
+
     /**
      * Construct
      *
@@ -81,7 +94,18 @@ class ZohoClient
         $this->format = 'xml';
         $this->client = $client ?: new HttpClient();
         $this->factory = $factory ?: new Factory();
+        $this->baseUri = self::BASE_URI;
         return $this;
+    }
+
+    /**
+     * Select EU Domain
+     *
+     * @param boolean isEU
+     */
+    public function setEuDomain($eu=true)
+    {
+        $this->baseUri = $eu? self::BASE_URI_EU : self::BASE_URI;
     }
 
     /**
@@ -443,7 +467,8 @@ class ZohoClient
     {
         if (empty($this->module)) {
             throw new \RuntimeException('Zoho CRM module is not set.');
-        }$parts = array(self::BASE_URI, $this->format, $this->module, $command);
+        }
+        $parts = array($this->baseUri, $this->format, $this->module, $command);
         return implode('/', $parts);
     }
 
