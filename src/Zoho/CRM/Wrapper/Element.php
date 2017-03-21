@@ -90,7 +90,7 @@ abstract class Element
      */
     private function stripNamespaceFromClassName($obj)
     {
-        $classname = get_class($obj);
+        $className = get_class($obj);
         return substr($className, strrpos($className, '\\') + 1);
     }
 
