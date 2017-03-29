@@ -30,7 +30,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Zoho\\CRM\\": "src/Zoho/"
+            "Zoho\\CRM\\": "src/Zoho/CRM/"
         }
     },
     "require-dev": {
