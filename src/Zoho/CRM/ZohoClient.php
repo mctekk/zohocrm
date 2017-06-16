@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of mctekk/zohocrm library.
+ *
+ * (c) MCTekK S.R.L. https://mctekk.com/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zoho\CRM;
 
 use Zoho\CRM\Common\FactoryInterface;
@@ -10,21 +19,18 @@ use Zoho\CRM\Wrapper\Element;
 
 /**
  * Client for provide interface with Zoho CRM
- *
- * @package Zoho\CRM
  */
 class ZohoClient
 {
-
     /**
-    * Defined the module names
-    *
-    * @var string
-    */
+     * Defined the module names
+     *
+     * @var string
+     */
     const MODULE_LEADS = 'Leads';
     const MODULE_CONTACTS = 'Contacts';
     const MODULE_ACCOUNTS = 'Accounts';
-  
+
     /**
      * URL for call request
      *
@@ -74,7 +80,8 @@ class ZohoClient
      */
     protected $module;
 
-    /** Base URI for selected domain
+    /**
+     * Base URI for selected domain
      *
      * @var string
      */
@@ -95,17 +102,19 @@ class ZohoClient
         $this->client = $client ?: new HttpClient();
         $this->factory = $factory ?: new Factory();
         $this->baseUri = self::BASE_URI;
+
         return $this;
     }
 
     /**
      * Select EU Domain
      *
-     * @param boolean isEU
+     * @param bool isEU
+     * @param mixed $eu
      */
-    public function setEuDomain($eu=true)
+    public function setEuDomain($eu = true)
     {
-        $this->baseUri = $eu? self::BASE_URI_EU : self::BASE_URI;
+        $this->baseUri = $eu ? self::BASE_URI_EU : self::BASE_URI;
     }
 
     /**
@@ -120,11 +129,13 @@ class ZohoClient
      *                        version   1 (default) - use earlier API implementation
      *                                  2 - use latest API implementation
      * @param array $options Options to add for configurations [optional]
+     *
      * @return Response The Response object
      */
-    public function convertLead($leadId, $data, $params = array(), $options = array())
+    public function convertLead($leadId, $data, $params = [], $options = [])
     {
         $params['leadId'] = $leadId;
+
         return $this->call('convertLead', $params, $data, $options);
     }
 
@@ -144,11 +155,13 @@ class ZohoClient
      *                        version           Integer 1 (default) - use earlier API implementation
      *                                                   2 - use latest API implementation
      * @param array $options Options to add for configurations [optional]
+     *
      * @return Response The Response object
      */
-    public function getCVRecords($name, $params = array(), $options = array())
+    public function getCVRecords($name, $params = [], $options = [])
     {
         $params['cvName'] = $name;
+
         return $this->call('getCVRecords', $params);
     }
 
@@ -159,7 +172,7 @@ class ZohoClient
      */
     public function getFields()
     {
-        return $this->call('getFields', array());
+        return $this->call('getFields', []);
     }
 
     /**
@@ -172,6 +185,7 @@ class ZohoClient
     public function deleteRecords($id)
     {
         $params['id'] = $id;
+
         return $this->call('deleteRecords', $params);
     }
 
@@ -186,15 +200,17 @@ class ZohoClient
      *                        version   1 (default) - use earlier API implementation
      *                                  2 - use latest API implementation
      * @param array $options Options to add for configurations [optional]
+     *
      * @return Response The Response object
      */
-    public function getRecordById($id, $params = array(), $options = array())
+    public function getRecordById($id, $params = [], $options = [])
     {
         if (is_array($id)) {
-            $params['idlist'] = implode(";",$id);
+            $params['idlist'] = implode(';', $id);
         } else {
             $params['id'] = $id;
         }
+
         return $this->call('getRecordById', $params);
     }
 
@@ -216,9 +232,10 @@ class ZohoClient
      *                        version           Integer    1 (default) - use earlier API implementation
      *                                                  2 - use latest API implementation
      * @param array $options Options to add for configurations [optional]
+     *
      * @return Response The Response object
      */
-    public function getRecords($params = array(), $options = array())
+    public function getRecords($params = [], $options = [])
     {
         return $this->call('getRecords', $params);
     }
@@ -241,9 +258,10 @@ class ZohoClient
      *                        version           Integer    1 (default) - use earlier API implementation
      *                                                  2 - use latest API implementation
      * @param array $options Options to add for configurations [optional]
+     *
      * @return Response The Response object
      */
-    public function getRelatedRecords($params = array(), $options = array())
+    public function getRelatedRecords($params = [], $options = [])
     {
         return $this->call('getRelatedRecords', $params);
     }
@@ -253,6 +271,7 @@ class ZohoClient
      *
      * @param string $searchCondition search condition in the format (fieldName|condition|searchString)
      *                                e.g. (Email|contains|*@sample.com*)
+     *
      * @param array $params           request parameters
      *                                selectColumns String  Module(columns) e.g. Leads(Last Name,Website,Email)
      *                                                      Note: do not use any extra spaces when listing column names
@@ -263,10 +282,11 @@ class ZohoClient
      *                                                      2 - include fields with null values in the response
      *                                version       Integer 1 (default) - use earlier API implementation
      *                                                      2 - use latest API implementation
+     * @param mixed $options
      *
      * @return Response The Response object
      */
-    public function getSearchRecords($searchCondition, $params = array(), $options = array())
+    public function getSearchRecords($searchCondition, $params = [], $options = [])
     {
         $params['searchCondition'] = $searchCondition;
         if (empty($params['selectColumns'])) {
@@ -280,7 +300,6 @@ class ZohoClient
      * Implements searchRecords API method.
      *
      * @param string $searchCondition search condition in the format (((Last Name:Steve)AND(Company:Zillum))OR(Lead Status:Contacted))
-     *
      * @param array $params           request parameters
      *                                selectColumns String  Module(columns) e.g. Leads(Last Name,Website,Email)
      *                                                      Note: do not use any extra spaces when listing column names
@@ -291,10 +310,12 @@ class ZohoClient
      *                                                      2 - include fields with null values in the response
      *                                version       Integer 1 (default) - use earlier API implementation
      *                                                      2 - use latest API implementation
+     * @param mixed $criteria
+     * @param mixed $options
      *
      * @return Response The Response object
      */
-    public function searchRecords($criteria, $params = array(), $options = array())
+    public function searchRecords($criteria, $params = [], $options = [])
     {
         $params['criteria'] = $criteria;
         if (empty($params['selectColumns'])) {
@@ -313,7 +334,7 @@ class ZohoClient
      *                              DeactiveUsers - only deactivated users
      *                              AdminUsers - all users with admin privileges
      *                              ActiveConfirmedAdmins - users with admin privileges that are confirmed
-     * @param integer $newFormat  1 (default) - exclude fields with null values in the response
+     * @param int $newFormat  1 (default) - exclude fields with null values in the response
      *                            2 - include fields with null values in the response
      *
      * @return Response The Response object
@@ -322,6 +343,7 @@ class ZohoClient
     {
         $params['type'] = $type;
         $params['newFormat'] = $newFormat;
+
         return $this->call('getUsers', $params);
     }
 
@@ -344,13 +366,13 @@ class ZohoClient
      *                                                4 - enable duplicate check functionality for multiple records.
      *                                                It's recommended to use version 4 for inserting multiple records
      *                                                even when duplicate check is turned off.
-     *
      * @param array $options Options to add for configurations [optional]
+     *
      * @return Response The Response object
+     *
      * @todo
-    - Make default value for duplicateCheck configurable
      */
-    public function insertRecords($data, $params = array(), $options = array())
+    public function insertRecords($data, $params = [], $options = [])
     {
         // if (!isset($params['duplicateCheck'])) {
         //     $params['duplicateCheck'] = 1;
@@ -376,11 +398,11 @@ class ZohoClient
      *                         version      Integer   1 (default) - use earlier API implementation
      *                                                2 - use latest API implementation
      *                                                4 - update multiple records in a single API method call
-     *
      * @param array $options Options to add for configurations [optional]
+     *
      * @return Response The Response object
      */
-    public function updateRecords($id, $data, $params = array(), $options = array())
+    public function updateRecords($id, $data, $params = [], $options = [])
     {
         if (is_array($data) && count($data['records']) > 1) {
             // Version 4 is mandatory for updating multiple records.
@@ -391,16 +413,16 @@ class ZohoClient
             }
 
             $params['id'] = $id;
-        }return $this->call('updateRecords', $params, $data, $options);
+        }
+
+        return $this->call('updateRecords', $params, $data, $options);
     }
 
     /**
      * Implements uploadFile API method.
      *
      * @param string             $id            unique ID of the record to be updated
-     *
      * @param file path             $content     Pass the File Input Stream of the file
-     *
      * @param array  $params   request parameters
      *                         wfTrigger    Boolean   Set value as true to trigger the workflow rule
      *                                                while inserting record into CRM account. By default, this parameter is false.
@@ -412,7 +434,7 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function uploadFile($id, $content, $params = array())
+    public function uploadFile($id, $content, $params = [])
     {
         if (empty($id)) {
             throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
@@ -422,6 +444,7 @@ class ZohoClient
         if (function_exists('curl_file_create')) { // php 5.6+
             $params['content'] = curl_file_create($content);
         }
+
         return $this->call('uploadFile', $params);
     }
 
@@ -446,15 +469,95 @@ class ZohoClient
     }
 
     /**
+     * Convert from array to XML
+     *
+     * @param array $data Data to convert
+     *
+     * @return XML
+     */
+    public function toXML($data)
+    {
+        $root = isset($data['root']) ? $data['root'] : $this->module;
+        $no = 1;
+        $xml = '<'.$root.'>';
+        if (isset($data['options'])) {
+            $xml .= '<row no="'.$no.'">';
+            foreach ($data['options'] as $key => $value) {
+                $xml .= '<option val="'.$key.'">'.$value.'</option>';
+            }
+            $xml .= '</row>';
+            ++$no;
+        }
+        foreach ($data['records'] as $row) {
+            $xml .= '<row no="'.$no.'">';
+            foreach ($row as $key => $value) {
+                if (is_array($value)) {
+                    $xml .= '<FL val="'.str_replace('&', 'and', $key).'">';
+                    foreach ($value as $k => $v) {
+                        list($tag, $attribute) = explode(' ', $k);
+                        $xml .= '<'.$tag.' no="'.$attribute.'">';
+                        foreach ($v as $kk => $vv) {
+                            $xml .= '<FL val="'.str_replace('&', 'and', $kk).'"><![CDATA['.$vv.']]></FL>';
+                        }
+                        $xml .= '</'.$tag.'>';
+                    }
+                    $xml .= '</FL>';
+                } else {
+                    $xml .= '<FL val="'.str_replace('&', 'and', $key).'"><![CDATA['.$value.']]></FL>';
+                }
+            }
+            $xml .= '</row>';
+            ++$no;
+        }
+        $xml .= '</'.$root.'>';
+
+        return $xml;
+    }
+
+    /**
+     * Convert an entity into XML
+     *
+     * @param Element $entity Element with values on fields setted
+     *
+     * @return string XML created
+     *
+     * @todo
+     */
+    public function mapEntity(Element $entity)
+    {
+        if (empty($this->module)) {
+            throw new \Exception('Invalid module, it must be setted before map the entity', 1);
+        }
+
+        $element = new \ReflectionObject($entity);
+        $properties = $element->getProperties();
+        $no = 1;
+        $xml = '<'.$this->module.'>';
+        $xml .= '<row no="'.$no.'">';
+        foreach ($properties as $property) {
+            $propName = $property->getName();
+            $propValue = $entity->$propName;
+            if ($propValue !== null) {
+                $xml .= '<FL val="'.str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'], $propName).'"><![CDATA['.$propValue.']]></FL>';
+            }
+        }
+        $xml .= '</row>';
+        $xml .= '</'.$this->module.'>';
+
+        return $xml;
+    }
+
+    /**
      * Make the call using the client
      *
      * @param string $command Command to call
      * @param string $params Options
      * @param array $data Data to send [optional]
      * @param array $options Options to add for configurations [optional]
+     *
      * @return Response
      */
-    protected function call($command, $params, $data = array(), $options = array())
+    protected function call($command, $params, $data = [], $options = [])
     {
         $uri = $this->getRequestURI($command);
         $body = $this->getRequestBody($params, $data, $options);
@@ -466,6 +569,7 @@ class ZohoClient
      * Get the current request uri
      *
      * @param string $command Command for get uri
+     *
      * @return string
      */
     protected function getRequestURI($command)
@@ -473,7 +577,8 @@ class ZohoClient
         if (empty($this->module)) {
             throw new \RuntimeException('Zoho CRM module is not set.');
         }
-        $parts = array($this->baseUri, $this->format, $this->module, $command);
+        $parts = [$this->baseUri, $this->format, $this->module, $command];
+
         return implode('/', $parts);
     }
 
@@ -481,14 +586,16 @@ class ZohoClient
      * Get the body of the request
      *
      * @param array $params Params
-     * @param Object $data Data
+     * @param object $data Data
+     * @param mixed $options
+     *
      * @return string
      */
     protected function getRequestBody($params, $data, $options)
     {
         $params['scope'] = 'crmapi';
         $params['authtoken'] = $this->authtoken;
-        $params += array('newFormat' => 1); //'version' => 2,
+        $params += ['newFormat' => 1]; //'version' => 2,
         if (!empty($data)) {
             $params['xmlData'] = (isset($options['map']) && $options['map']) ? $this->toXML($data) : $data;
         }
@@ -498,80 +605,5 @@ class ZohoClient
         }
 
         return $params;
-    }
-
-    /**
-     * Convert from array to XML
-     *
-     * @param array $data Data to convert
-     * @return XML
-     */
-    public function toXML($data)
-    {
-        $root = isset($data['root']) ? $data['root'] : $this->module;
-        $no = 1;
-        $xml = '<' . $root . '>';
-        if (isset($data['options'])) {
-            $xml .= '<row no="' . $no . '">';
-            foreach ($data['options'] as $key => $value) {
-                $xml .= '<option val="' . $key . '">' . $value . '</option>';
-            }
-            $xml .= '</row>';
-            $no++;
-        }
-        foreach ($data['records'] as $row) {
-            $xml .= '<row no="' . $no . '">';
-            foreach ($row as $key => $value) {
-                if (is_array($value)) {
-                    $xml .= '<FL val="' . str_replace('&', 'and', $key) . '">';
-                    foreach ($value as $k => $v) {
-                        list($tag, $attribute) = explode(' ', $k);
-                        $xml .= '<' . $tag . ' no="' . $attribute . '">';
-                        foreach ($v as $kk => $vv) {
-                            $xml .= '<FL val="' . str_replace('&', 'and', $kk) . '"><![CDATA[' . $vv . ']]></FL>';
-                        }
-                        $xml .= '</' . $tag . '>';
-                    }
-                    $xml .= '</FL>';
-                } else {
-                    $xml .= '<FL val="' . str_replace('&', 'and', $key) . '"><![CDATA[' . $value . ']]></FL>';
-                }
-            }
-            $xml .= '</row>';
-            $no++;
-        }
-        $xml .= '</' . $root . '>';
-        return $xml;
-    }
-
-    /**
-     * Convert an entity into XML
-     *
-     * @param Element $entity Element with values on fields setted
-     * @return string XML created
-     * @todo
-    - Add iteration for multiples entities and creation of xml with collection
-     */
-    public function mapEntity(Element $entity)
-    {
-        if (empty($this->module)) {
-            throw new \Exception("Invalid module, it must be setted before map the entity", 1);
-        }
-
-        $element = new \ReflectionObject($entity);
-        $properties = $element->getProperties();
-        $no = 1;
-        $xml = '<' . $this->module . '>';
-        $xml .= '<row no="' . $no . '">';
-        foreach ($properties as $property) {
-            $propName = $property->getName();
-            $propValue = $entity->$propName;
-            if ($propValue !== null) {
-                $xml .= '<FL val="' . str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'], $propName) . '"><![CDATA[' . $propValue . ']]></FL>';
-            }
-
-        }$xml .= '</row>';
-        $xml .= '</' . $this->module . '>';
-        return $xml;
     }
 }

@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of mctekk/zohocrm library.
+ *
+ * (c) MCTekK S.R.L. https://mctekk.com/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zoho\CRM\Request;
 
 use Zoho\CRM\Common\HttpClientInterface;
@@ -8,7 +17,6 @@ use Zoho\CRM\Common\HttpClientInterface;
  * Simple cURL based HTTP Client.
  * Sends API calls to Zoho server.
  *
- * @package Zoho\CRM\Request
  * @version 1.0.0
  * @implements HttpClientInterface
  */
@@ -21,7 +29,7 @@ class HttpClient implements HttpClientInterface
     public function __construct()
     {
         if (!function_exists('curl_init')) {
-            throw new \Exception("cURL is not supported by server.");
+            throw new \Exception('cURL is not supported by server.');
         }
     }
 
@@ -34,7 +42,7 @@ class HttpClient implements HttpClientInterface
         $response = false;
         while ($response === false && $count < $this->retry) {
             $response = curl_exec($this->curl);
-            $count++;
+            ++$count;
         }
 
         if ($response === false) {
@@ -49,9 +57,8 @@ class HttpClient implements HttpClientInterface
     public function setTimeout($timeout)
     {
         if (is_numeric($timeout)) {
-            $this->timeout = intval($timeout);
+            $this->timeout = (int) $timeout;
         }
-
     }
 
     public function getTimeout()
@@ -62,7 +69,7 @@ class HttpClient implements HttpClientInterface
     public function setRetry($retry)
     {
         if (is_numeric($retry)) {
-            $this->retry = intval($retry);
+            $this->retry = (int) $retry;
         }
     }
 
@@ -86,5 +93,4 @@ class HttpClient implements HttpClientInterface
         // curl_setopt($this->curl, CURLOPT_SSL_CIPHER_LIST, 'rsa_rc4_128_sha');
         // curl_setopt($this->curl, CURLOPT_SSLVERSION, 3);
     }
-
 }

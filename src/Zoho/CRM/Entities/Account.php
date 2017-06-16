@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of mctekk/zohocrm library.
+ *
+ * (c) MCTekK S.R.L. https://mctekk.com/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zoho\CRM\Entities;
 
 use Zoho\CRM\Wrapper\Element;
@@ -8,7 +17,6 @@ use Zoho\CRM\Wrapper\Element;
  * Entity for accounts inside Zoho
  * This class only have default parameters
  *
- * @package Zoho\CRM\Entities
  * @version 1.0.0
  */
 class Account extends Element
@@ -136,6 +144,7 @@ class Account extends Element
      * The billing address of the account to send the quotes, invoices, and other agreements.
      *
      * Divided into 5 parts:
+     *
      *     @var string
      *     @var string
      *     @var string
@@ -152,6 +161,7 @@ class Account extends Element
      * The shipping address of the account to deliver the shipment.
      *
      * Divided into 5 parts:
+     *
      *     @var string
      *     @var string
      *     @var string
@@ -170,5 +180,4 @@ class Account extends Element
      * @var string
      */
     protected $Description;
-
 }
