@@ -19,11 +19,9 @@ simple, but rather very powerful for complex XML applications.
 Installation
 ------------
 
-Using by composer, just add this parameters to your `composer.json` 
+Using composer, execute the following command to add the requirement to your `composer.json`
 
-    "mctekk/zohocrm": "dev-master"
-
-Then, run `$ composer update` and you should be good.
+    $ composer require mctekk/zohocrm:^1.0@dev
 
 Let's start
 -----------
@@ -84,34 +82,34 @@ class Lead
 {
 	/**
 	 * Zoho CRM user to whom the Lead is assigned.
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Lead_Owner;
 
 	/**
 	 * Salutation for the lead
-	 * 
+	 *
 	 * @var string
-	 */	
+	 */
 	private $Salutation;
-	
+
 	/**
 	 * First name of the lead
-	 * 
+	 *
 	 * @var string
-	 */	
+	 */
 	private $First_Name;
-	
+
 	/**
 	 * The job position of the lead
-	 * 
+	 *
 	 * @var string
-	 */	
+	 */
 	private $Title;
 
 	/* etc, others fields... */
-}	
+}
 ```
 
 You can use this entity like a been, and make your own implementation of XML assings, but if you wanna use this for mapping xml, it recommended extends the entity of `Zoho\CRM\Wrapper\Element`, something like this:
@@ -122,7 +120,7 @@ use Zoho\CRM\Wrapper\Element;
 class Lead extends Element
 {
 	/* ...fields... */
-}	
+}
 ```
 
 Now for load the **xvseL** into the object Lead just call the method of the parent `deserializeXml(string $xvsel)`:
