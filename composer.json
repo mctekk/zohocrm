@@ -25,7 +25,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.5",
         "ext-curl": "*"
     },
     "autoload": {
@@ -34,7 +34,8 @@
         }
     },
     "require-dev": {
-        "codeception/verify": "^0.1"
+        "codeception/verify": "^0.1",
+        "friendsofphp/php-cs-fixer": "^2.2"
     },
     "extra": {
         "branch-alias": {

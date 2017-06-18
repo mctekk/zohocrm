@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of mctekk/zohocrm library.
+ *
+ * (c) MCTekK S.R.L. https://mctekk.com/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zoho\CRM\Entities;
 
 use Zoho\CRM\Wrapper\Element;
@@ -8,7 +17,6 @@ use Zoho\CRM\Wrapper\Element;
  * Entity for users inside Zoho
  * This class only have default parameters
  *
- * @package Zoho\CRM\Entities
  * @version 1.0.0
  */
 class Users extends Element
@@ -54,5 +62,4 @@ class Users extends Element
      * @var string
      */
     protected $confirm;
-
 }

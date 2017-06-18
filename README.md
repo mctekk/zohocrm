@@ -1,11 +1,11 @@
 Zoho CRM library for PHP 5.5+
 =============================
 
-The Zoho CRM library is a specialized xml, json wrapper for make request to zoho API, base on another vendor from [vaish](https://github.com/vaish/zohocrm-php), but this have some overpower :p.
+The Zoho CRM library is a specialized XML wrapper for make request to zoho API, base on another vendor from [vaish](https://github.com/vaish/zohocrm-php), but this have some overpower :p.
 
-I often found myself repeating the same pattern for xml | json manipulation with this API over and over. This library implements that pattern.
+I often found myself repeating the same pattern for XML manipulation with this API over and over. This library implements that pattern.
 
-At it's heart, the library maps xml string to entity classes elements for interact like PHP value objects.
+At it's heart, the library maps XML string to entity classes elements for interact like PHP value objects.
 
 The following assumptions are made:
 
