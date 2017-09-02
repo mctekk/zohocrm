@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of mctekk/zohocrm library.
+ *
+ * (c) MCTekK S.R.L. https://mctekk.com/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zoho\CRM\Entities;
 
 use Zoho\CRM\Wrapper\Element;
@@ -43,7 +52,7 @@ class Vendor extends Element
     /**
      * Identifies if coming from finance agents
      *
-     * @var boolean
+     * @var bool
      */
     protected $BFA;
 
@@ -102,5 +111,4 @@ class Vendor extends Element
      * @var string
      */
     protected $Website;
-
 }

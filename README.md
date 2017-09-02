@@ -1,11 +1,11 @@
 Zoho CRM library for PHP 5.5+
 =============================
 
-The Zoho CRM library is a specialized xml, json wrapper for make request to zoho API, base on another vendor from [vaish](https://github.com/vaish/zohocrm-php), but this have some overpower :p.
+The Zoho CRM library is a specialized XML wrapper for make request to zoho API, base on another vendor from [vaish](https://github.com/vaish/zohocrm-php), but this have some overpower :p.
 
-I often found myself repeating the same pattern for xml | json manipulation with this API over and over. This library implements that pattern.
+I often found myself repeating the same pattern for XML manipulation with this API over and over. This library implements that pattern.
 
-At it's heart, the library maps xml string to entity classes elements for interact like PHP value objects.
+At it's heart, the library maps XML string to entity classes elements for interact like PHP value objects.
 
 The following assumptions are made:
 
@@ -19,11 +19,9 @@ simple, but rather very powerful for complex XML applications.
 Installation
 ------------
 
-Using by composer, just add this parameters to your `composer.json` 
+Using composer, execute the following command to add the requirement to your `composer.json`
 
-    "mctekk/zohocrm": "dev-master"
-
-Then, run `$ composer update` and you should be good.
+    $ composer require mctekk/zohocrm:^1.0@dev
 
 Let's start
 -----------
@@ -84,34 +82,34 @@ class Lead
 {
 	/**
 	 * Zoho CRM user to whom the Lead is assigned.
-	 * 
+	 *
 	 * @var string
 	 */
 	private $Lead_Owner;
 
 	/**
 	 * Salutation for the lead
-	 * 
+	 *
 	 * @var string
-	 */	
+	 */
 	private $Salutation;
-	
+
 	/**
 	 * First name of the lead
-	 * 
+	 *
 	 * @var string
-	 */	
+	 */
 	private $First_Name;
-	
+
 	/**
 	 * The job position of the lead
-	 * 
+	 *
 	 * @var string
-	 */	
+	 */
 	private $Title;
 
 	/* etc, others fields... */
-}	
+}
 ```
 
 You can use this entity like a been, and make your own implementation of XML assings, but if you wanna use this for mapping xml, it recommended extends the entity of `Zoho\CRM\Wrapper\Element`, something like this:
@@ -122,7 +120,7 @@ use Zoho\CRM\Wrapper\Element;
 class Lead extends Element
 {
 	/* ...fields... */
-}	
+}
 ```
 
 Now for load the **xvseL** into the object Lead just call the method of the parent `deserializeXml(string $xvsel)`:

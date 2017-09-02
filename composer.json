@@ -13,45 +13,33 @@
         {
             "name": "Frangeris Peguero",
             "email": "frangeris.20@gmail.com",
-            "homepage": "https://github.com/mctekk/zohocrm"            
+            "homepage": "https://github.com/mctekk/zohocrm"
         },
         {
             "name": "Sparo Hawk",
-            "homepage": "https://github.com/mctekk/zohocrm"            
+            "homepage": "https://github.com/mctekk/zohocrm"
         },
         {
             "name": "Kaioken",
-            "homepage": "https://github.com/mctekk/zohocrm"            
+            "homepage": "https://github.com/mctekk/zohocrm"
         }
     ],
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.5",
         "ext-curl": "*"
     },
     "autoload": {
         "psr-4": {
-            "Zoho\\CRM\\Common\\": "src/Zoho/Common/",
-            "Zoho\\CRM\\Config\\": "src/Zoho/Config/",
-            "Zoho\\CRM\\Entities\\": "src/Zoho/Entities/",
-            "Zoho\\CRM\\Exception\\": "src/Zoho/Exception/",
-            "Zoho\\CRM\\Request\\": "src/Zoho/Request/",
-            "Zoho\\CRM\\Wrapper\\": "src/Zoho/Wrapper/",
             "Zoho\\CRM\\": "src/Zoho/CRM/"
         }
     },
-     "autoload-dev": {
-        "psr-4": {
-           "Zoho\\CRM\\Common\\": "src/Zoho/Common/",
-            "Zoho\\CRM\\Config\\": "src/Zoho/Config/",
-            "Zoho\\CRM\\Entities\\": "src/Zoho/Entities/",
-            "Zoho\\CRM\\Exception\\": "src/Zoho/Exception/",
-            "Zoho\\CRM\\Request\\": "src/Zoho/Request/",
-            "Zoho\\CRM\\Wrapper\\": "src/Zoho/Wrapper/",
-            "Zoho\\CRM\\": "src/Zoho/CRM/"
-
-        }
-    } ,
     "require-dev": {
-        "codeception/verify": "*"
+        "codeception/verify": "^0.1",
+        "friendsofphp/php-cs-fixer": "^2.2"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
     }
 }

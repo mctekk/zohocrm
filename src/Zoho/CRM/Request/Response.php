@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of mctekk/zohocrm library.
+ *
+ * (c) MCTekK S.R.L. https://mctekk.com/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zoho\CRM\Request;
 
 use Zoho\CRM\Exception\ZohoCRMException;
@@ -10,7 +19,6 @@ use Zoho\CRM\Exception\ZohoCRMException;
  * Parses the ZohoCRM response into an object and
  * normalizes different response formats.
  *
- * @package Zoho\CRM\Request
  * @version 1.0.0
  */
 class Response
@@ -48,7 +56,7 @@ class Response
      *
      * @var array
      */
-    protected $records = array();
+    protected $records = [];
 
     /**
      * Specific redord affected
@@ -66,6 +74,7 @@ class Response
 
     /**
      * XML on request
+     *
      * @var string
      */
     protected $xmlstr;
@@ -123,7 +132,7 @@ class Response
 
     public function getResponse()
     {
-        return array(
+        return [
             'module' => $this->module,
             'method' => $this->method,
             'message' => $this->message,
@@ -132,20 +141,29 @@ class Response
             'recordId' => $this->recordId,
             'records' => $this->records,
             'xmlstr' => $this->xmlstr,
-        );
+        ];
+    }
+
+    public function ifSuccess()
+    {
+        if (mb_strpos($this->message, 'success') !== false) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function parseResponse()
     {
         $xml = simplexml_load_string($this->xmlstr, 'SimpleXMLElement', LIBXML_NOERROR | LIBXML_NOWARNING);
         if ($xml === false) {
-            throw new ZohoCRMException("Zoho CRM response could not be parsed as XML.", 0000);
+            throw new ZohoCRMException('Zoho CRM response could not be parsed as XML.', 0000);
         }
 
         if (isset($xml->error)) {
             $message = (string) $xml->error->message;
             $code = (string) $xml->error->code;
-            throw new ZohoCRMException((string) $xml['uri'] . ' ' . $message, $code);
+            throw new ZohoCRMException((string) $xml['uri'].' '.$message, $code);
         }
 
         $this->uri = (string) $xml['uri'];
@@ -183,7 +201,7 @@ class Response
 
         // convertLead
         elseif ((string) $xml->getName() == 'success') {
-            $records = array();
+            $records = [];
             foreach ($xml->children() as $child) {
                 $records[(string) $child->getName()] = (string) $child;
             }
@@ -197,17 +215,17 @@ class Response
             preg_match('/[0-9]{18}/', $this->message, $matches);
             $this->recordId = $matches[0];
         } else {
-            throw new ZohoCRMException("Unknown Zoho CRM response format.");
+            throw new ZohoCRMException('Unknown Zoho CRM response format.');
         }
     }
 
     protected function parseResponseGetFields($xml)
     {
-        $records = array();
+        $records = [];
         foreach ($xml->section as $section) {
             foreach ($section->children() as $field) {
                 $label = (string) $field['label'];
-                $records[(string) $section['name']][$label] = array(
+                $records[(string) $section['name']][$label] = [
                     'req' => (string) $field['req'] === 'true' ? true : false,
                     'type' => (string) $field['type'],
                     'isreadonly' => (string) $field['isreadonly'] === 'true' ? true : false,
@@ -215,9 +233,9 @@ class Response
                     'label' => $label,
                     'dv' => (string) $field['dv'],
                     'customfield' => (string) $field['customfield'] === 'true' ? true : false,
-                );
+                ];
                 if ($field->children()->count() > 0) {
-                    $records[(string) $section['name']][$label]['values'] = array();
+                    $records[(string) $section['name']][$label]['values'] = [];
                     foreach ($field->children() as $value) {
                         $records[(string) $section['name']][$label]['values'][] = (string) $value;
                     }
@@ -229,7 +247,7 @@ class Response
 
     protected function parseResponseGetUsers($xml)
     {
-        $records = array();
+        $records = [];
         foreach ($xml as $user) {
             foreach ($user->attributes() as $key => $value) {
                 $records[(string) $user['id']][$key] = (string) $value;
@@ -241,7 +259,7 @@ class Response
 
     protected function parseResponseGetRecords($xml)
     {
-        $records = array();
+        $records = [];
         foreach ($xml->result->children()->children() as $row) {
             $no = (string) $row['no'];
             foreach ($row->children() as $field) {
@@ -259,14 +277,14 @@ class Response
         $this->records = $records;
 
         if ($this->method == 'getRecordById') {
-            $id = strtoupper(substr($this->module, 0, -1)) . 'ID';
+            $id = mb_strtoupper(mb_substr($this->module, 0, -1)).'ID';
             $this->recordId = $this->records[1][$id];
         }
     }
 
     protected function parseResponsePostRecords($xml)
     {
-        $record = array();
+        $record = [];
         foreach ($xml->result->recorddetail as $detail) {
             foreach ($detail->children() as $field) {
                 $record[(string) $field['val']] = (string) $field;
@@ -282,7 +300,7 @@ class Response
 
     protected function parseResponsePostRecordsMultiple($xml)
     {
-        $records = array();
+        $records = [];
         foreach ($xml->result->row as $row) {
             $no = (string) $row['no'];
             if (isset($row->success)) {
@@ -297,14 +315,5 @@ class Response
         }
         ksort($records);
         $this->records = $records;
-    }
-
-    public function ifSuccess()
-    {
-        if (strpos($this->message, 'success') !== false) {
-            return true;
-        }
-
-        return false;
     }
 }
