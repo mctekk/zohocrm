@@ -212,7 +212,8 @@ class Response
         elseif (isset($xml->result->message) && isset($xml->result->code)) {
             $this->message = (string) $xml->result->message;
             $this->code = (string) $xml->result->code;
-            # support deleteRecords with idList
+            # support deleteRecords with idList.
+            # EU DC has shorted record Ids, so matches 16 or more digits
             preg_match_all('/[0-9]{16,}/', $this->message, $matches);
             $this->recordId = implode(";",$matches[0]);
         } else {
