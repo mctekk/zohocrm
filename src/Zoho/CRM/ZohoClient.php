@@ -178,13 +178,18 @@ class ZohoClient
     /**
      * Implements deleteRecords API method.
      *
-     * @param string $id      Id of the record
+     * @param mixed $id  Id of the record if string or list of ids if an array
+     *                     a list will be passed as the parameter idlist
      *
      * @return Response The Response object
      */
     public function deleteRecords($id)
     {
-        $params['id'] = $id;
+        if (is_array($id)) {
+            $params['idlist'] = implode(';', $id);
+        } else {
+            $params['id'] = $id;
+        }
 
         return $this->call('deleteRecords', $params);
     }
