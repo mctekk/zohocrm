@@ -181,6 +181,35 @@ class Response
             $this->parseResponsePostRecordsMultiple($xml);
         }
 
+        // updateRelatedRecords
+        elseif (isset($xml->result->status->code) && $xml->result->status->code == 200
+            && (isset($xml->result->success->code) || isset($xml->result->error->code))) {
+            // get error code
+            if (isset($xml->result->error->code)) {
+                $this->code = (string) $xml->result->error->code;
+            }
+            // get error message
+            if (isset($xml->result->message)) {
+                $this->message = (string)$xml->result->message;
+            }
+            // get added or updated ids
+            foreach (['updated-ids', 'added-ids'] as $field) {
+                if (!isset($xml->result->$field)) {
+                    continue;
+                }
+                $this->records = array_map(
+                    function ($item) {
+                        return ['Id' => $item];
+                    },
+                    json_decode($xml->result->$field, true)
+                );
+                if (count($this->records) === 1) {
+                    $this->recordId = reset($this->records)['Id'];
+                }
+                break;
+            }
+        }
+
         // convertLead
         elseif ((string) $xml->getName() == 'success') {
             $records = array();
