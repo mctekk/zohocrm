@@ -416,11 +416,37 @@ class ZohoClient
             if (empty($id)) {
                 throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
             }
-
             $params['id'] = $id;
         }
 
         return $this->call('updateRecords', $params, $data, $options);
+    }
+
+    /**
+     * Implements updateRelatedRecords API method.
+     *
+     * @param string $id       unique ID of the record to be updated
+     * @param array  $data     xmlData represented as an array
+     *                         array will be converted into XML before sending the request
+     * @param array  $params   request parameters
+     *                         relatedModule string   Related Module name
+     *                         newFormat    Integer   1 (default) - exclude fields with "null" values while updating data
+     *                                                2 - include fields with "null" values while updating data
+     *                         version      Integer   1 (default) - use earlier API implementation
+     *                                                2 - use latest API implementation
+     *                                                4 - update multiple records in a single API method call
+     *
+     * @param array $options Options to add for configurations [optional]
+     * @return Response The Response object
+     */
+    public function updateRelatedRecords($id, $data, $params = array(), $options = array())
+    {
+        if (empty($id)) {
+            throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
+        }
+        $params['id'] = $id;
+
+        return $this->call('updateRelatedRecords', $params, $data, $options);
     }
 
     /**
