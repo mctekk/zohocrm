@@ -585,7 +585,12 @@ class ZohoClient
                     $xml .= $this->mapSingleEntity($propValue);
                 }
                 else {
-                    $xml .= '<![CDATA[' . (string) $propValue . ']]>';
+                    $propValue = (string) $propValue;
+                    // Use Character Data for non integers
+                    if (!is_int((string) $propValue + 0)) {
+                       $propValue = "<![CDATA[$propValue]]>";
+                    }
+                    $xml .= $propValue;
                 }
                 $xml .= '</FL>';
             }
