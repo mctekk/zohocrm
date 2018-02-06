@@ -603,7 +603,7 @@ class ZohoClient
                 else {
                     $propValue = (string) $propValue;
                     // Use Character Data for non integers
-                    if (!is_int((string) $propValue + 0)) {
+                    if (!ctype_digit($propValue)) {
                        $propValue = "<![CDATA[$propValue]]>";
                     }
                     $xml .= $propValue;
