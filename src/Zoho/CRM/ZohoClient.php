@@ -416,11 +416,37 @@ class ZohoClient
             if (empty($id)) {
                 throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
             }
-
             $params['id'] = $id;
         }
 
         return $this->call('updateRecords', $params, $data, $options);
+    }
+
+    /**
+     * Implements updateRelatedRecords API method.
+     *
+     * @param string $id       unique ID of the record to be updated
+     * @param array  $data     xmlData represented as an array
+     *                         array will be converted into XML before sending the request
+     * @param array  $params   request parameters
+     *                         relatedModule string   Related Module name
+     *                         newFormat    Integer   1 (default) - exclude fields with "null" values while updating data
+     *                                                2 - include fields with "null" values while updating data
+     *                         version      Integer   1 (default) - use earlier API implementation
+     *                                                2 - use latest API implementation
+     *                                                4 - update multiple records in a single API method call
+     *
+     * @param array $options Options to add for configurations [optional]
+     * @return Response The Response object
+     */
+    public function updateRelatedRecords($id, $data, $params = array(), $options = array())
+    {
+        if (empty($id)) {
+            throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
+        }
+        $params['id'] = $id;
+
+        return $this->call('updateRelatedRecords', $params, $data, $options);
     }
 
     /**
@@ -522,32 +548,91 @@ class ZohoClient
     /**
      * Convert an entity into XML
      *
-     * @param Element $entity Element with values on fields setted
-     *
+     * @param Element $entity     Element
+     * @param string  $entityName Element name
      * @return string XML created
-     *
-     * @todo
+     * @throws \Exception
      */
-    public function mapEntity(Element $entity)
+    public function mapEntity($entity, $entityName = null)
     {
-        if (empty($this->module)) {
-            throw new \Exception('Invalid module, it must be setted before map the entity', 1);
+        // It's module entity
+        if (is_null($entityName)) {
+            if (empty($this->module)) {
+                throw new \Exception('Invalid module, it must be set before mapping entity', 1);
+            }
+            $entityName = $this->module;
+            $entity = [$entity];
         }
 
+        $xml = '<' . $entityName . '>';
+        $xml .= is_array($entity) ? $this->mapEntityList($entity) : $this->mapSingleEntity($entity);
+        $xml .= '</' . $entityName . '>';
+        return $xml;
+    }
+
+    /**
+     * Convert single entity into XML
+     *
+     * @param Element $entity Element
+     * @return string XML created
+     */
+    protected function mapSingleEntity(Element $entity)
+    {
         $element = new \ReflectionObject($entity);
-        $properties = $element->getProperties();
-        $no = 1;
-        $xml = '<'.$this->module.'>';
-        $xml .= '<row no="'.$no.'">';
+        $properties = $element->getProperties(\ReflectionProperty::IS_PUBLIC);
+        $xml = '';
         foreach ($properties as $property) {
             $propName = $property->getName();
             $propValue = $entity->$propName;
             if ($propValue !== null) {
-                $xml .= '<FL val="'.str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'], $propName).'"><![CDATA['.$propValue.']]></FL>';
+                $xml .= '<FL val="' . str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'], $propName) . '">';
+                // It's a list of entities
+                if (is_array($propValue)) {
+                    $tag = null;
+                    list($key, $list) = each($propValue);
+                    if (!is_numeric($key)) {
+                        $tag = $key;
+                        $propValue = $list;
+                    }
+                    $xml .= $this->mapEntityList($propValue, $tag);
+                }
+                // It's an entity
+                elseif (is_object($propValue) && (!$propValue instanceof \DateTime)) {
+                    $xml .= $this->mapSingleEntity($propValue);
+                }
+                else {
+                    $propValue = (string) $propValue;
+                    // Use Character Data for non integers
+                    if (!ctype_digit($propValue)) {
+                       $propValue = "<![CDATA[$propValue]]>";
+                    }
+                    $xml .= $propValue;
+                }
+                $xml .= '</FL>';
             }
         }
-        $xml .= '</row>';
-        $xml .= '</'.$this->module.'>';
+        return $xml;
+    }
+
+    /**
+     * Convert list of entities into XML
+     *
+     * @param array  $list           List of Elements
+     * @param string $rowElementName Element name
+     * @return string XML $list
+     */
+    protected function mapEntityList(array $list, $rowElementName = null)
+    {
+        if (is_null($rowElementName)) {
+            $rowElementName = 'row';
+        }
+        $xml = '';
+        $no = 1;
+        foreach ($list as $element) {
+            $xml .= '<' . $rowElementName . ' no="' . $no++ . '">';
+            $xml .= $this->mapSingleEntity($element);
+            $xml .= "</$rowElementName>";
+        }
 
         return $xml;
     }
