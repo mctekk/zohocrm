@@ -579,7 +579,7 @@ class ZohoClient
     protected function mapSingleEntity(Element $entity)
     {
         $element = new \ReflectionObject($entity);
-        $properties = $element->getProperties(\ReflectionProperty::IS_PUBLIC);
+        $properties = $element->getProperties();
         $xml = '';
         foreach ($properties as $property) {
             $propName = $property->getName();
