@@ -452,9 +452,9 @@ class ZohoClient
     /**
      * Implements uploadFile API method.
      *
-     * @param string             $id            unique ID of the record to be updated
-     * @param file path             $content     Pass the File Input Stream of the file
-     * @param array  $params   request parameters
+     * @param string           $id          unique ID of the record to be updated
+     * @param file path        $content     Pass the File Input Stream of the file or URL
+     * @param array            $params      request parameters
      *                         wfTrigger    Boolean   Set value as true to trigger the workflow rule
      *                                                while inserting record into CRM account. By default, this parameter is false.
      *                         newFormat    Integer   1 (default) - exclude fields with "null" values while updating data
@@ -471,9 +471,14 @@ class ZohoClient
             throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
         }
         $params['id'] = $id;
-        $params['content'] = $content;
-        if (function_exists('curl_file_create')) { // php 5.6+
-            $params['content'] = curl_file_create($content);
+
+        if (substr($content, 0, 4) === 'http') {
+            $params['attachmentUrl'] = $content;
+        } else {
+            $params['content'] = $content;
+            if (function_exists('curl_file_create')) { // php 5.6+
+                $params['content'] = curl_file_create($content);
+            }
         }
 
         return $this->call('uploadFile', $params);
