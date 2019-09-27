@@ -16,14 +16,16 @@ use Zoho\CRM\Common\HttpClientInterface;
 use Zoho\CRM\Request\Factory;
 use Zoho\CRM\Request\HttpClient;
 use Zoho\CRM\Wrapper\Element;
+use GuzzleHttp\Client;
+use Exception;
 
 /**
- * Client for provide interface with Zoho CRM
+ * Client for provide interface with Zoho CRM.
  */
 class ZohoClient
 {
     /**
-     * Defined the module names
+     * Defined the module names.
      *
      * @var string
      */
@@ -32,82 +34,228 @@ class ZohoClient
     const MODULE_ACCOUNTS = 'Accounts';
 
     /**
-     * URL for call request
+     * URL for call request.
      *
      * @var string
      */
     const BASE_URI = 'https://crm.zoho.com/crm/private';
 
     /**
-     * URL for call request in zoho.eu
+     * URL for call request in zoho.eu.
      *
      * @var string
      */
     const BASE_URI_EU = 'https://crm.zoho.eu/crm/private';
 
     /**
-     * Token used for session of request
+     * Base Token URI
      *
      * @var string
      */
-    protected $authtoken;
+    const TOKEN_URI = 'https://accounts.zoho.com/oauth/v2/token';
 
     /**
-     * Instance of the client
+     * Grant Type
+     *
+     * @var string
+     */
+    const GRANT_TYPE = 'authorization_code';
+
+    /**
+     * Grant Type Refresh
+     *
+     * @var string
+     */
+    const GRANT_TYPE_REFRESH = 'refresh_token';
+
+    /**
+     * Grant Type Refresh
+     *
+     * @var string
+     */
+    const API_VERSION = 'v2';
+
+    /**
+     * Token used for session of request.
+     *
+     * @var string
+     */
+    protected $grantToken;
+
+    /**
+     * Client Id from Zoho
+     *
+     * @var string
+     */
+    protected $zohoClientId;
+
+    /**
+     * Redirect URI from Zoho
+     *
+     * @var string
+     */
+    protected $zohoRedirectUri;
+
+    /**
+     * Client Secret from Zoho
+     *
+     * @var string
+     */
+    protected $zohoClientSecret;
+
+    /**
+     * Grant Type from Zoho
+     *
+     * @var string
+     */
+    protected $zohoGrantType;
+
+
+    /**
+     * Refresh Token for Zoho Auth
+     *
+     * @var string
+     */
+    protected $authRefreshToken;
+
+    /**
+     * Access Token for Zoho Auth.
+     *
+     * @var string
+     */
+    protected $authAccessToken;
+
+    /**
+     * Authentication Array
+     *
+     * @var string
+     */
+    protected $authArray;
+
+    /**
+     * Instance of the client.
      *
      * @var HttpClientInterface
      */
     protected $client;
 
     /**
-     * Instance of the factory
+     * Instance of the factory.
      *
      * @var FactoryInterface
      */
     protected $factory;
 
     /**
-     * Format selected for get request
+     * Format selected for get request.
      *
      * @var string
      */
     protected $format;
 
     /**
-     * Module selected for get request
+     * Module selected for get request.
      *
      * @var string
      */
     protected $module;
 
     /**
-     * Base URI for selected domain
+     * Base URI for selected domain.
      *
      * @var string
      */
     protected $baseUri;
 
     /**
-     * Construct
+     * Construct.
      *
      * @param string $authtoken Token for connection
      * @param HttpClientInterface $client HttpClient for connection [optional]
      * @param FactotoryInterface $factory [optional]
      */
-    public function __construct($authtoken, HttpClientInterface $client = null, FactoryInterface $factory = null)
+    public function __construct($grantToken, $zohoClientId = null, $zohoClientSecret = null, $zohoRedirectUri = null, HttpClientInterface $client = null, FactoryInterface $factory = null)
     {
-        $this->authtoken = $authtoken;
-        // Only XML format is supported for the time being
         $this->format = 'xml';
-        $this->client = $client ?: new HttpClient();
+        $this->client = $client ?: new Client();
         $this->factory = $factory ?: new Factory();
-        $this->baseUri = self::BASE_URI;
+
+        $this->grantToken = $grantToken;
+        $this->zohoClientId = $zohoClientId;
+        $this->zohoClientSecret = $zohoClientSecret;
+        $this->zohoRedirectUri = $zohoRedirectUri;
+        $this->zohoGrantType = self::GRANT_TYPE;
+
+        $this->authArray = array(
+            'code'=>$this->grantToken,
+            'redirect_uri'=> $this->zohoRedirectUri,
+            'client_id'=> $this->zohoClientId,
+            'client_secret'=> $this->zohoClientSecret,
+            'grant_type'=> $this->zohoGrantType
+        );
 
         return $this;
     }
 
     /**
-     * Select EU Domain
+     * Generate Access Token by Grant Token
+     *
+     * @return void
+     */
+    public function generateAccessTokenByGrantToken(): void
+    {
+        //Use Guzzle client to make call
+        $res = $this->client->post(self::TOKEN_URI, ['query'=>$this->authArray,'verify'=>false]);
+        $auth = json_decode($res->getBody(), true);
+
+        if (!array_key_exists('access_token', $auth)) {
+            throw new Exception('Error on Zoho Authentication,please validate that the grant token given to you by Zoho is active');
+        }
+        $this->authAccessToken = $auth['access_token'];
+        $this->authRefreshToken = $auth['refresh_token'];
+        $this->baseUri = $auth['api_domain'];
+    }
+
+    /**
+     * Generate Access Token by Grant Token
+     *
+     * @return void
+     */
+    public function generateAccessTokenByRefreshToken()
+    {
+        $authRefreshArray = array(
+            'refresh_token'=> $this->authRefreshToken,
+            'client_id'=> $this->zohoClientId,
+            'client_secret'=> $this->zohoClientSecret,
+            'grant_type'=> self::GRANT_TYPE_REFRESH
+        );
+
+        return $authRefreshArray;
+
+        //Use Guzzle client to make call
+        $res = $this->client->post(self::TOKEN_URI, ['query'=>$authRefreshArray,'verify'=>false]);
+        $auth = json_decode($res->getBody(), true);
+
+        $this->authAccessToken = $auth['access_token'];
+    }
+
+    /**
+     * Sets the http client's default headers
+     * 
+     * @return void
+     * @todo Give more options on default header by passing an array.
+     */
+    public function getDefaultHeaders()
+    {
+        $this->generateAccessTokenByRefreshToken();
+        return array(
+            'Authorization'=> 'Zoho-oauthtoken ' . $this->authAccessToken
+        );
+
+    }
+
+    /**
+     * Select EU Domain.
      *
      * @param bool isEU
      * @param mixed $eu
@@ -216,7 +364,7 @@ class ZohoClient
             $params['id'] = $id;
         }
 
-        return $this->call('getRecordById', $params);
+        return $this->call('get', $params);
     }
 
     /**
@@ -242,7 +390,7 @@ class ZohoClient
      */
     public function getRecords($params = [], $options = [])
     {
-        return $this->call('getRecords', $params);
+        return $this->call('get', $params);
     }
 
     /**
@@ -439,7 +587,7 @@ class ZohoClient
      * @param array $options Options to add for configurations [optional]
      * @return Response The Response object
      */
-    public function updateRelatedRecords($id, $data, $params = array(), $options = array())
+    public function updateRelatedRecords($id, $data, $params = [], $options = [])
     {
         if (empty($id)) {
             throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
@@ -485,7 +633,7 @@ class ZohoClient
     }
 
     /**
-     * Get the module
+     * Get the module.
      *
      * @return string
      */
@@ -495,7 +643,7 @@ class ZohoClient
     }
 
     /**
-     * Set the model
+     * Set the model.
      *
      * @param string $module Module to use
      */
@@ -505,53 +653,7 @@ class ZohoClient
     }
 
     /**
-     * Convert from array to XML
-     *
-     * @param array $data Data to convert
-     *
-     * @return XML
-     */
-    public function toXML($data)
-    {
-        $root = isset($data['root']) ? $data['root'] : $this->module;
-        $no = 1;
-        $xml = '<'.$root.'>';
-        if (isset($data['options'])) {
-            $xml .= '<row no="'.$no.'">';
-            foreach ($data['options'] as $key => $value) {
-                $xml .= '<option val="'.$key.'">'.$value.'</option>';
-            }
-            $xml .= '</row>';
-            ++$no;
-        }
-        foreach ($data['records'] as $row) {
-            $xml .= '<row no="'.$no.'">';
-            foreach ($row as $key => $value) {
-                if (is_array($value)) {
-                    $xml .= '<FL val="'.str_replace('&', 'and', $key).'">';
-                    foreach ($value as $k => $v) {
-                        list($tag, $attribute) = explode(' ', $k);
-                        $xml .= '<'.$tag.' no="'.$attribute.'">';
-                        foreach ($v as $kk => $vv) {
-                            $xml .= '<FL val="'.str_replace('&', 'and', $kk).'"><![CDATA['.$vv.']]></FL>';
-                        }
-                        $xml .= '</'.$tag.'>';
-                    }
-                    $xml .= '</FL>';
-                } else {
-                    $xml .= '<FL val="'.str_replace('&', 'and', $key).'"><![CDATA['.$value.']]></FL>';
-                }
-            }
-            $xml .= '</row>';
-            ++$no;
-        }
-        $xml .= '</'.$root.'>';
-
-        return $xml;
-    }
-
-    /**
-     * Convert an entity into XML
+     * Convert an entity into XML.
      *
      * @param Element $entity     Element
      * @param string  $entityName Element name
@@ -576,7 +678,7 @@ class ZohoClient
     }
 
     /**
-     * Convert single entity into XML
+     * Convert single entity into XML.
      *
      * @param Element $entity Element
      * @return string XML created
@@ -604,12 +706,11 @@ class ZohoClient
                 // It's an entity
                 elseif (is_object($propValue) && (!$propValue instanceof \DateTime)) {
                     $xml .= $this->mapSingleEntity($propValue);
-                }
-                else {
+                } else {
                     $propValue = (string) $propValue;
                     // Use Character Data for non integers
                     if (!ctype_digit($propValue)) {
-                       $propValue = "<![CDATA[$propValue]]>";
+                        $propValue = "<![CDATA[$propValue]]>";
                     }
                     $xml .= $propValue;
                 }
@@ -620,7 +721,7 @@ class ZohoClient
     }
 
     /**
-     * Convert list of entities into XML
+     * Convert list of entities into XML.
      *
      * @param array  $list           List of Elements
      * @param string $rowElementName Element name
@@ -643,42 +744,60 @@ class ZohoClient
     }
 
     /**
-     * Make the call using the client
+     * Make the call using the client.
      *
      * @param string $command Command to call
      * @param string $params Options
      * @param array $data Data to send [optional]
      * @param array $options Options to add for configurations [optional]
      *
+     * @todo Modify createResponse so that it gives the same response regardless of how the response is structured
      * @return Response
      */
-    protected function call($command, $params, $data = [], $options = [])
+    protected function call($method, $params = [], $data = [], $options = [])
     {
-        $uri = $this->getRequestURI($command);
-        $body = $this->getRequestBody($params, $data, $options);
-        $xml = $this->client->post($uri, $body); // Make the request to web service
-        return $this->factory->createResponse($xml, $this->module, $command);
+        $defaultHeaders = $this->getDefaultHeaders();
+        // $this->client->setDefaultOption('headers', $defaultHeaders);
+        $uri = array_key_exists('id', $params) ? $this->getRequestURI() . '/' . $params['id'] : $this->getRequestURI();
+        // $body = $this->getRequestBody($params, $data, $options);
+        $response = $this->client->request(strtoupper($method), $uri, $this->constructRequestParams($defaultHeaders));
+        return json_decode($response->getBody(), true);
+        // return $this->factory->createResponse($xml, $this->module, $command);
     }
 
     /**
-     * Get the current request uri
+     * Construct request's params array
+     *
+     * @return array
+     */
+    protected function constructRequestParams(array $defaultHeaders, array $body = []): array
+    {
+        return array(
+            'headers'=> $defaultHeaders,
+            'form_params'=> $body,
+            'verify'=>false
+        );
+    }
+
+    /**
+     * Get the current request uri.
      *
      * @param string $command Command for get uri
      *
      * @return string
      */
-    protected function getRequestURI($command)
+    protected function getRequestURI(): string
     {
         if (empty($this->module)) {
             throw new \RuntimeException('Zoho CRM module is not set.');
         }
-        $parts = [$this->baseUri, $this->format, $this->module, $command];
+        $parts = [$this->baseUri, 'crm', self::API_VERSION, $this->module];
 
         return implode('/', $parts);
     }
 
     /**
-     * Get the body of the request
+     * Get the body of the request.
      *
      * @param array $params Params
      * @param object $data Data
