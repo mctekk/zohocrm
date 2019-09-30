@@ -48,28 +48,28 @@ class ZohoClient
     const BASE_URI_EU = 'https://crm.zoho.eu/crm/private';
 
     /**
-     * Base Token URI
+     * Base Token URI.
      *
      * @var string
      */
     const TOKEN_URI = 'https://accounts.zoho.com/oauth/v2/token';
 
     /**
-     * Grant Type
+     * Grant Type.
      *
      * @var string
      */
     const GRANT_TYPE = 'authorization_code';
 
     /**
-     * Grant Type Refresh
+     * Grant Type Refresh.
      *
      * @var string
      */
     const GRANT_TYPE_REFRESH = 'refresh_token';
 
     /**
-     * Grant Type Refresh
+     * Grant Type Refresh.
      *
      * @var string
      */
@@ -83,36 +83,35 @@ class ZohoClient
     protected $grantToken;
 
     /**
-     * Client Id from Zoho
+     * Client Id from Zoho.
      *
      * @var string
      */
     protected $zohoClientId;
 
     /**
-     * Redirect URI from Zoho
+     * Redirect URI from Zoho.
      *
      * @var string
      */
     protected $zohoRedirectUri;
 
     /**
-     * Client Secret from Zoho
+     * Client Secret from Zoho.
      *
      * @var string
      */
     protected $zohoClientSecret;
 
     /**
-     * Grant Type from Zoho
+     * Grant Type from Zoho.
      *
      * @var string
      */
     protected $zohoGrantType;
 
-
     /**
-     * Refresh Token for Zoho Auth
+     * Refresh Token for Zoho Auth.
      *
      * @var string
      */
@@ -126,7 +125,7 @@ class ZohoClient
     protected $authAccessToken;
 
     /**
-     * Authentication Array
+     * Authentication Array.
      *
      * @var string
      */
@@ -186,26 +185,26 @@ class ZohoClient
         $this->zohoRedirectUri = $zohoRedirectUri;
         $this->zohoGrantType = self::GRANT_TYPE;
 
-        $this->authArray = array(
-            'code'=>$this->grantToken,
-            'redirect_uri'=> $this->zohoRedirectUri,
-            'client_id'=> $this->zohoClientId,
-            'client_secret'=> $this->zohoClientSecret,
-            'grant_type'=> $this->zohoGrantType
-        );
+        $this->authArray = [
+            'code' => $this->grantToken,
+            'redirect_uri' => $this->zohoRedirectUri,
+            'client_id' => $this->zohoClientId,
+            'client_secret' => $this->zohoClientSecret,
+            'grant_type' => $this->zohoGrantType
+        ];
 
         return $this;
     }
 
     /**
-     * Generate Access Token by Grant Token
+     * Generate Access Token by Grant Token.
      *
      * @return void
      */
     public function generateAccessTokenByGrantToken(): void
     {
         //Use Guzzle client to make call
-        $res = $this->client->post(self::TOKEN_URI, ['query'=>$this->authArray,'verify'=>false]);
+        $res = $this->client->post(self::TOKEN_URI, ['query' => $this->authArray, 'verify' => false]);
         $auth = json_decode($res->getBody(), true);
 
         if (!array_key_exists('access_token', $auth)) {
@@ -217,41 +216,40 @@ class ZohoClient
     }
 
     /**
-     * Generate Access Token by Grant Token
+     * Generate Access Token by Grant Token.
      *
      * @return void
      */
     public function generateAccessTokenByRefreshToken()
     {
-        $authRefreshArray = array(
-            'refresh_token'=> $this->authRefreshToken,
-            'client_id'=> $this->zohoClientId,
-            'client_secret'=> $this->zohoClientSecret,
-            'grant_type'=> self::GRANT_TYPE_REFRESH
-        );
+        $authRefreshArray = [
+            'refresh_token' => $this->authRefreshToken,
+            'client_id' => $this->zohoClientId,
+            'client_secret' => $this->zohoClientSecret,
+            'grant_type' => self::GRANT_TYPE_REFRESH
+        ];
 
         return $authRefreshArray;
 
         //Use Guzzle client to make call
-        $res = $this->client->post(self::TOKEN_URI, ['query'=>$authRefreshArray,'verify'=>false]);
+        $res = $this->client->post(self::TOKEN_URI, ['query' => $authRefreshArray, 'verify' => false]);
         $auth = json_decode($res->getBody(), true);
 
         $this->authAccessToken = $auth['access_token'];
     }
 
     /**
-     * Sets the http client's default headers
-     * 
+     * Sets the http client's default headers.
+     *
      * @return void
      * @todo Give more options on default header by passing an array.
      */
     public function getDefaultHeaders()
     {
         $this->generateAccessTokenByRefreshToken();
-        return array(
-            'Authorization'=> 'Zoho-oauthtoken ' . $this->authAccessToken
-        );
-
+        return [
+            'Authorization' => 'Zoho-oauthtoken ' . $this->authAccessToken
+        ];
     }
 
     /**
@@ -475,7 +473,7 @@ class ZohoClient
             $params['selectColumns'] = 'All';
         }
 
-        return $this->call('searchRecords', $params);
+        return $this->call('get', $params);
     }
 
     /**
@@ -527,14 +525,7 @@ class ZohoClient
      */
     public function insertRecords($data, $params = [], $options = [])
     {
-        // if (!isset($params['duplicateCheck'])) {
-        //     $params['duplicateCheck'] = 1;
-        // }
-        if (!isset($params['version']) && isset($data['records']) && count($data['records']) > 1) {
-            $params['version'] = 4;
-        }
-
-        return $this->call('insertRecords', $params, $data, $options);
+        return $this->call('post', $params, $data, $options);
     }
 
     /**
@@ -557,17 +548,11 @@ class ZohoClient
      */
     public function updateRecords($id, $data, $params = [], $options = [])
     {
-        if (is_array($data) && count($data['records']) > 1) {
-            // Version 4 is mandatory for updating multiple records.
-            $params['version'] = 4;
-        } else {
-            if (empty($id)) {
-                throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
-            }
-            $params['id'] = $id;
+        if (empty($id)) {
+            throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
         }
-
-        return $this->call('updateRecords', $params, $data, $options);
+        $params['id'] = $id;
+        return $this->call('put', $params, $data, $options);
     }
 
     /**
@@ -593,7 +578,6 @@ class ZohoClient
             throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
         }
         $params['id'] = $id;
-
         return $this->call('updateRelatedRecords', $params, $data, $options);
     }
 
@@ -650,31 +634,6 @@ class ZohoClient
     public function setModule($module)
     {
         $this->module = $module;
-    }
-
-    /**
-     * Convert an entity into XML.
-     *
-     * @param Element $entity     Element
-     * @param string  $entityName Element name
-     * @return string XML created
-     * @throws \Exception
-     */
-    public function mapEntity($entity, $entityName = null)
-    {
-        // It's module entity
-        if (is_null($entityName)) {
-            if (empty($this->module)) {
-                throw new \Exception('Invalid module, it must be set before mapping entity', 1);
-            }
-            $entityName = $this->module;
-            $entity = [$entity];
-        }
-
-        $xml = '<' . $entityName . '>';
-        $xml .= is_array($entity) ? $this->mapEntityList($entity) : $this->mapSingleEntity($entity);
-        $xml .= '</' . $entityName . '>';
-        return $xml;
     }
 
     /**
@@ -757,26 +716,44 @@ class ZohoClient
     protected function call($method, $params = [], $data = [], $options = [])
     {
         $defaultHeaders = $this->getDefaultHeaders();
-        // $this->client->setDefaultOption('headers', $defaultHeaders);
         $uri = array_key_exists('id', $params) ? $this->getRequestURI() . '/' . $params['id'] : $this->getRequestURI();
-        // $body = $this->getRequestBody($params, $data, $options);
-        $response = $this->client->request(strtoupper($method), $uri, $this->constructRequestParams($defaultHeaders));
+        if (array_key_exists('criteria', $params)) {
+            $uri = $this->appendCriteria($uri, $params['criteria']);
+        }
+        $body = $this->getRequestBody($params, $data, $options);
+        $response = $this->client->request(strtoupper($method), $uri, $this->constructRequestParams($defaultHeaders, $body));
         return json_decode($response->getBody(), true);
         // return $this->factory->createResponse($xml, $this->module, $command);
     }
 
     /**
-     * Construct request's params array
+     * Append search criteria to current URI.
+     *
+     * @param string $uri
+     * @param string $criteria
+     * @return string
+     */
+    protected function appendCriteria(string $uri, string $criteria): string
+    {
+        $equalCriteriaSearch = str_replace(':', ':equals:', $criteria);
+        return $uri . '/search?criteria=' . $equalCriteriaSearch;
+    }
+
+    /**
+     * Construct request's params array.
      *
      * @return array
      */
     protected function constructRequestParams(array $defaultHeaders, array $body = []): array
     {
-        return array(
-            'headers'=> $defaultHeaders,
-            'form_params'=> $body,
-            'verify'=>false
-        );
+        return [
+            'headers' => $defaultHeaders,
+            'json' => [
+                'data' => [$body['data']],
+                'trigger' => $body['trigger']
+            ],
+            'verify' => false
+        ];
     }
 
     /**
@@ -807,17 +784,9 @@ class ZohoClient
      */
     protected function getRequestBody($params, $data, $options)
     {
-        $params['scope'] = 'crmapi';
-        $params['authtoken'] = $this->authtoken;
-        $params += ['newFormat' => 1]; //'version' => 2,
-        if (!empty($data)) {
-            $params['xmlData'] = (isset($options['map']) && $options['map']) ? $this->toXML($data) : $data;
-        }
-
-        if (!isset($params['content'])) {
-            return http_build_query($params, '', '&');
-        }
-
-        return $params;
+        return  [
+            'data' => $data,
+            'trigger' => $options
+        ];
     }
 }
