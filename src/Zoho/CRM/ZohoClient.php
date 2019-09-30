@@ -680,29 +680,6 @@ class ZohoClient
     }
 
     /**
-     * Convert list of entities into XML.
-     *
-     * @param array  $list           List of Elements
-     * @param string $rowElementName Element name
-     * @return string XML $list
-     */
-    protected function mapEntityList(array $list, $rowElementName = null)
-    {
-        if (is_null($rowElementName)) {
-            $rowElementName = 'row';
-        }
-        $xml = '';
-        $no = 1;
-        foreach ($list as $element) {
-            $xml .= '<' . $rowElementName . ' no="' . $no++ . '">';
-            $xml .= $this->mapSingleEntity($element);
-            $xml .= "</$rowElementName>";
-        }
-
-        return $xml;
-    }
-
-    /**
      * Make the call using the client.
      *
      * @param string $command Command to call
@@ -722,8 +699,8 @@ class ZohoClient
         }
         $body = $this->getRequestBody($params, $data, $options);
         $response = $this->client->request(strtoupper($method), $uri, $this->constructRequestParams($defaultHeaders, $body));
-        return json_decode($response->getBody(), true);
-        // return $this->factory->createResponse($xml, $this->module, $command);
+        $responseData = json_decode($response->getBody(), true);
+        return $this->factory->createResponse($responseData, $this->module, $command);
     }
 
     /**
