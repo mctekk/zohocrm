@@ -18,6 +18,7 @@ use Zoho\CRM\Request\HttpClient;
 use Zoho\CRM\Wrapper\Element;
 use GuzzleHttp\Client;
 use Exception;
+use SimpleXMLElement;
 
 /**
  * Client for provide interface with Zoho CRM.
@@ -169,7 +170,10 @@ class ZohoClient
     /**
      * Construct.
      *
-     * @param string $authtoken Token for connection
+     * @param string $grantToken Grant Token of Registered App from Zoho
+     * @param string $zohoClientId Client Id of Registered App from Zoho
+     * @param string $zohoClientSecret Client Secret of Registered App from Zoho
+     * @param string $zohoRedirectUri Redirect URI of Registered App from Zoho
      * @param HttpClientInterface $client HttpClient for connection [optional]
      * @param FactotoryInterface $factory [optional]
      */
@@ -392,32 +396,6 @@ class ZohoClient
     }
 
     /**
-     * Implements getRecords API method.
-     *
-     * @param array $params   request parameters
-     *                        selectColumns     String  Module(optional columns) i.e, leads(Last Name,Website,Email) OR All
-     *                        fromIndex            Integer    Default value 1
-     *                        toIndex              Integer    Default value 20
-     *                                                  Maximum value 200
-     *                        sortColumnString    String    If you use the sortColumnString parameter, by default data is sorted in ascending order.
-     *                        sortOrderString      String    Default value - asc
-     *                                          if you want to sort in descending order, then you have to pass sortOrderString=desc.
-     *                        lastModifiedTime    DateTime    Default value: null
-     *                                          If you specify the time, modified data will be fetched after the configured time.
-     *                        newFormat         Integer    1 (default) - exclude fields with null values in the response
-     *                                                  2 - include fields with null values in the response
-     *                        version           Integer    1 (default) - use earlier API implementation
-     *                                                  2 - use latest API implementation
-     * @param array $options Options to add for configurations [optional]
-     *
-     * @return Response The Response object
-     */
-    public function getRelatedRecords($params = [], $options = [])
-    {
-        return $this->call('getRelatedRecords', $params);
-    }
-
-    /**
      * Implements getSearchRecords API method.
      *
      * @param string $searchCondition search condition in the format (fieldName|condition|searchString)
@@ -474,28 +452,6 @@ class ZohoClient
         }
 
         return $this->call('get', $params);
-    }
-
-    /**
-     * Implements getUsers API method.
-     *
-     *  @param string  $type       type of the user to return. Possible values:
-     *                              AllUsers - all users (both active and inactive)
-     *                              ActiveUsers - only active users
-     *                              DeactiveUsers - only deactivated users
-     *                              AdminUsers - all users with admin privileges
-     *                              ActiveConfirmedAdmins - users with admin privileges that are confirmed
-     * @param int $newFormat  1 (default) - exclude fields with null values in the response
-     *                            2 - include fields with null values in the response
-     *
-     * @return Response The Response object
-     */
-    public function getUsers($type = 'AllUsers', $newFormat = 1)
-    {
-        $params['type'] = $type;
-        $params['newFormat'] = $newFormat;
-
-        return $this->call('getUsers', $params);
     }
 
     /**
@@ -556,32 +512,6 @@ class ZohoClient
     }
 
     /**
-     * Implements updateRelatedRecords API method.
-     *
-     * @param string $id       unique ID of the record to be updated
-     * @param array  $data     xmlData represented as an array
-     *                         array will be converted into XML before sending the request
-     * @param array  $params   request parameters
-     *                         relatedModule string   Related Module name
-     *                         newFormat    Integer   1 (default) - exclude fields with "null" values while updating data
-     *                                                2 - include fields with "null" values while updating data
-     *                         version      Integer   1 (default) - use earlier API implementation
-     *                                                2 - use latest API implementation
-     *                                                4 - update multiple records in a single API method call
-     *
-     * @param array $options Options to add for configurations [optional]
-     * @return Response The Response object
-     */
-    public function updateRelatedRecords($id, $data, $params = [], $options = [])
-    {
-        if (empty($id)) {
-            throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
-        }
-        $params['id'] = $id;
-        return $this->call('updateRelatedRecords', $params, $data, $options);
-    }
-
-    /**
      * Implements uploadFile API method.
      *
      * @param string           $id          unique ID of the record to be updated
@@ -637,52 +567,9 @@ class ZohoClient
     }
 
     /**
-     * Convert single entity into XML.
-     *
-     * @param Element $entity Element
-     * @return string XML created
-     */
-    protected function mapSingleEntity(Element $entity)
-    {
-        $element = new \ReflectionObject($entity);
-        $properties = $element->getProperties();
-        $xml = '';
-        foreach ($properties as $property) {
-            $propName = $property->getName();
-            $propValue = $entity->$propName;
-            if ($propValue !== null) {
-                $xml .= '<FL val="' . str_replace(['_', 'N36', 'E5F', '&', '98T'], [' ', '$', '_', 'and', '?'], $propName) . '">';
-                // It's a list of entities
-                if (is_array($propValue)) {
-                    $tag = null;
-                    list($key, $list) = each($propValue);
-                    if (!is_numeric($key)) {
-                        $tag = $key;
-                        $propValue = $list;
-                    }
-                    $xml .= $this->mapEntityList($propValue, $tag);
-                }
-                // It's an entity
-                elseif (is_object($propValue) && (!$propValue instanceof \DateTime)) {
-                    $xml .= $this->mapSingleEntity($propValue);
-                } else {
-                    $propValue = (string) $propValue;
-                    // Use Character Data for non integers
-                    if (!ctype_digit($propValue)) {
-                        $propValue = "<![CDATA[$propValue]]>";
-                    }
-                    $xml .= $propValue;
-                }
-                $xml .= '</FL>';
-            }
-        }
-        return $xml;
-    }
-
-    /**
      * Make the call using the client.
      *
-     * @param string $command Command to call
+     * @param string $method HTTP method
      * @param string $params Options
      * @param array $data Data to send [optional]
      * @param array $options Options to add for configurations [optional]
@@ -700,7 +587,7 @@ class ZohoClient
         $body = $this->getRequestBody($params, $data, $options);
         $response = $this->client->request(strtoupper($method), $uri, $this->constructRequestParams($defaultHeaders, $body));
         $responseData = json_decode($response->getBody(), true);
-        return $this->factory->createResponse($responseData, $this->module, $command);
+        return $this->factory->createResponse($responseData, $this->module, $method)->getRecords();
     }
 
     /**

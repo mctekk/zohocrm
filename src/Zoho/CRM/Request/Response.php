@@ -24,71 +24,71 @@ use Zoho\CRM\Exception\ZohoCRMException;
 class Response
 {
     /**
-     * Code error
+     * Code error.
      *
      * @var string
      */
     protected $code;
 
     /**
-     * Message of the error
+     * Message of the error.
      *
      * @var string
      */
     protected $message;
 
     /**
-     * Method used
+     * Method used.
      *
      * @var string
      */
     protected $method;
 
     /**
-     * Module used
+     * Module used.
      *
      * @var string
      */
     protected $module;
 
     /**
-     * Records details affecteds
+     * Records details affecteds.
      *
      * @var array
      */
     protected $records = [];
 
     /**
-     * Specific redord affected
+     * Specific redord affected.
      *
      * @var string
      */
     protected $recordId;
 
     /**
-     * URL used for the request
+     * URL used for the request.
      *
      * @var string
      */
     protected $uri;
 
     /**
-     * XML on request
+     * Response Data from request.
      *
      * @var string
      */
-    protected $xmlstr;
+    protected $responseData;
 
-    public function __construct($xmlstr, $module, $method)
+    public function __construct($responseData, $module, $method)
     {
-        $this->xmlstr = $xmlstr;
+        $this->responseData = $responseData['data'];
         $this->module = $module;
         $this->method = $method;
         $this->parseResponse();
     }
 
     /**
-     * Setters & Getters
+     * Setters & Getters.
      */
     public function getModule()
     {
@@ -153,101 +153,81 @@ class Response
         return false;
     }
 
+    /**
+     * Parse response
+     *
+     * @return void
+     * @todo Need to convert json data from Zoho API v2 to the same array given in our Zoho CRM SDK
+     */
     protected function parseResponse()
     {
-        $xml = simplexml_load_string($this->xmlstr, 'SimpleXMLElement', LIBXML_NOERROR | LIBXML_NOWARNING);
-        if ($xml === false) {
-            throw new ZohoCRMException('Zoho CRM response could not be parsed as XML.', 0000);
+        /**
+         * For getRecords, getRelatedRecords, getSearchRecords, getRecordById, getCVRecords functions
+         */
+        if($this->method == 'get') {
+            $this->parseResponseGetRecords();
         }
 
-        if (isset($xml->error)) {
-            $message = (string) $xml->error->message;
-            $code = (string) $xml->error->code;
-            throw new ZohoCRMException((string) $xml['uri'].' '.$message, $code);
-        }
-
-        $this->uri = (string) $xml['uri'];
-
-        // No records returned
-        if (isset($xml->nodata)) {
-            $this->message = (string) $xml->nodata->message;
-            $this->code = (string) $xml->nodata->code;
-        }
-
-        // getFields
-        elseif ($this->method == 'getFields') {
-            $this->parseResponseGetFields($xml);
-        }
-
-        // getUsers
-        elseif ($this->method == 'getUsers') {
-            $this->parseResponseGetUsers($xml);
-        }
-
-        // getRecords, getRelatedRecords, getSearchRecords, getRecordById, getCVRecords
-        elseif (isset($xml->result->{$this->module})) {
-            $this->parseResponseGetRecords($xml);
-        }
-
-        // insertRecords, updateRecords (version = 1 or 2)
-        elseif (isset($xml->result->message) && isset($xml->result->recorddetail)) {
+        /**
+         * For insertRecords, updateRecords functions
+         */
+        if ($this->method == 'post' || $this->method == 'put') {
             $this->parseResponsePostRecords($xml);
         }
 
-        // insertRecords, updateRecords (version = 4)
-        elseif (isset($xml->result->row->success) || isset($xml->result->row->error)) {
-            $this->parseResponsePostRecordsMultiple($xml);
-        }
+    }
 
-        // updateRelatedRecords
-        elseif (isset($xml->result->status->code) && $xml->result->status->code == 200
-            && (isset($xml->result->success->code) || isset($xml->result->error->code))) {
-            // get error code
-            if (isset($xml->result->error->code)) {
-                $this->code = (string) $xml->result->error->code;
-            }
-            // get error message
-            if (isset($xml->result->message)) {
-                $this->message = (string)$xml->result->message;
-            }
-            // get added or updated ids
-            foreach (['updated-ids', 'added-ids'] as $field) {
-                if (!isset($xml->result->$field)) {
-                    continue;
+    /**
+     * Parse GET method responses
+     *
+     * @param [type] $xml
+     * @return void
+     */
+    protected function parseResponseGetRecords()
+    {
+        $data = $this->responseData;
+        $records = [];
+        foreach ($data as $dataElement) {
+            foreach ($dataElement as $key => $value) {
+
+                $key = strpos($key, '_') ? str_replace('_', ' ', $key) : $key;
+
+                if (gettype($value) == 'array' && array_key_exists('id', $value)) {
+
+                    if ($key == 'Owner') {
+                        $key = 'Lead ' . $key;
+                        $record['SMOWNERID'] = $value['id'];
+                        $value = $value['name'];
+                        
+                    } elseif ($key == 'Created By') {
+                        $record['SMCREATORID'] = $value['id'];
+                        $value = $value['name'];
+
+                    } else {
+                        $record[strtoupper(str_replace(' ', '', $key))] = $value['id'];
+                        $value = $value['name'];
+                    }
                 }
-                $this->records = array_map(
-                    function ($item) {
-                        return ['Id' => $item];
-                    },
-                    json_decode($xml->result->$field, true)
-                );
-                if (count($this->records) === 1) {
-                    $this->recordId = reset($this->records)['Id'];
+
+                if (gettype($value) == 'array' && empty($value)) {
+                    $value = '';
                 }
-                break;
+
+                if ($key == 'id') {
+                    $key = 'LEADID';
+                }
+
+                $record[$key] = $value;
             }
+            $records[] = $record; 
         }
 
-        // convertLead
-        elseif ((string) $xml->getName() == 'success') {
-            $records = [];
-            foreach ($xml->children() as $child) {
-                $records[(string) $child->getName()] = (string) $child;
-            }
-            $this->records = $records;
-        }
+        $this->records = $records;
 
-        // deleteRecords
-        elseif (isset($xml->result->message) && isset($xml->result->code)) {
-            $this->message = (string) $xml->result->message;
-            $this->code = (string) $xml->result->code;
-            # support deleteRecords with idList.
-            # EU DC has shorted record Ids, so matches 16 or more digits
-            preg_match_all('/[0-9]{16,}/', $this->message, $matches);
-            $this->recordId = implode(";",$matches[0]);
-        } else {
-            throw new ZohoCRMException('Unknown Zoho CRM response format.');
-        }
+        // if ($this->method == 'getRecordById') {
+        //     $id = mb_strtoupper(mb_substr($this->module, 0, -1)) . 'ID';
+        //     $this->recordId = $this->records[1][$id];
+        // }
     }
 
     protected function parseResponseGetFields($xml)
@@ -286,31 +266,6 @@ class Response
             $records[(string) $user['id']]['name'] = (string) $user;
         }
         $this->records = $records;
-    }
-
-    protected function parseResponseGetRecords($xml)
-    {
-        $records = [];
-        foreach ($xml->result->children()->children() as $row) {
-            $no = (string) $row['no'];
-            foreach ($row->children() as $field) {
-                if ($field->count() > 0) {
-                    foreach ($field->children() as $item) {
-                        foreach ($item->children() as $subitem) {
-                            $records[$no][(string) $field['val']][(string) $item['no']][(string) $subitem['val']] = (string) $subitem;
-                        }
-                    }
-                } else {
-                    $records[$no][(string) $field['val']] = (string) $field;
-                }
-            }
-        }
-        $this->records = $records;
-
-        if ($this->method == 'getRecordById') {
-            $id = mb_strtoupper(mb_substr($this->module, 0, -1)).'ID';
-            $this->recordId = $this->records[1][$id];
-        }
     }
 
     protected function parseResponsePostRecords($xml)
