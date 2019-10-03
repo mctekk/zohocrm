@@ -79,6 +79,13 @@ class Response
      */
     protected $responseData;
 
+    /**
+     * Response Status
+     *
+     * @var string
+     */
+    protected $status;
+
     public function __construct($responseData, $module, $method)
     {
         $this->responseData = $responseData['data'];
@@ -125,11 +132,6 @@ class Response
         return $this->recordId;
     }
 
-    public function getXML()
-    {
-        return $this->xmlstr;
-    }
-
     public function getResponse()
     {
         return [
@@ -146,7 +148,7 @@ class Response
 
     public function ifSuccess()
     {
-        if (mb_strpos($this->message, 'success') !== false) {
+        if (mb_strpos($this->status, 'success') !== false) {
             return true;
         }
 
@@ -154,55 +156,42 @@ class Response
     }
 
     /**
-     * Parse response
+     * Parse response.
      *
      * @return void
      * @todo Need to convert json data from Zoho API v2 to the same array given in our Zoho CRM SDK
      */
     protected function parseResponse()
     {
-        /**
-         * For getRecords, getRelatedRecords, getSearchRecords, getRecordById, getCVRecords functions
-         */
-        if($this->method == 'get') {
+        if ($this->method == 'get') {
             $this->parseResponseGetRecords();
+        } else {
+            $this->parseResponsePostRecords();
         }
-
-        /**
-         * For insertRecords, updateRecords functions
-         */
-        if ($this->method == 'post' || $this->method == 'put') {
-            $this->parseResponsePostRecords($xml);
-        }
-
     }
 
     /**
-     * Parse GET method responses
+     * Parse response for functions using GET method.
      *
      * @param [type] $xml
      * @return void
      */
-    protected function parseResponseGetRecords()
+    protected function parseResponseGetRecords(): void
     {
         $data = $this->responseData;
         $records = [];
         foreach ($data as $dataElement) {
             foreach ($dataElement as $key => $value) {
-
                 $key = strpos($key, '_') ? str_replace('_', ' ', $key) : $key;
 
                 if (gettype($value) == 'array' && array_key_exists('id', $value)) {
-
                     if ($key == 'Owner') {
                         $key = 'Lead ' . $key;
                         $record['SMOWNERID'] = $value['id'];
                         $value = $value['name'];
-                        
                     } elseif ($key == 'Created By') {
                         $record['SMCREATORID'] = $value['id'];
                         $value = $value['name'];
-
                     } else {
                         $record[strtoupper(str_replace(' ', '', $key))] = $value['id'];
                         $value = $value['name'];
@@ -219,87 +208,20 @@ class Response
 
                 $record[$key] = $value;
             }
-            $records[] = $record; 
+            $records[] = $record;
         }
 
         $this->records = $records;
-
-        // if ($this->method == 'getRecordById') {
-        //     $id = mb_strtoupper(mb_substr($this->module, 0, -1)) . 'ID';
-        //     $this->recordId = $this->records[1][$id];
-        // }
     }
 
-    protected function parseResponseGetFields($xml)
+    /**
+     * Parse response for functions using POST or PUT method.
+     * @return void
+     */
+    protected function parseResponsePostRecords()
     {
-        $records = [];
-        foreach ($xml->section as $section) {
-            foreach ($section->children() as $field) {
-                $label = (string) $field['label'];
-                $records[(string) $section['name']][$label] = [
-                    'req' => (string) $field['req'] === 'true' ? true : false,
-                    'type' => (string) $field['type'],
-                    'isreadonly' => (string) $field['isreadonly'] === 'true' ? true : false,
-                    'maxlength' => (int) $field['maxlength'],
-                    'label' => $label,
-                    'dv' => (string) $field['dv'],
-                    'customfield' => (string) $field['customfield'] === 'true' ? true : false,
-                ];
-                if ($field->children()->count() > 0) {
-                    $records[(string) $section['name']][$label]['values'] = [];
-                    foreach ($field->children() as $value) {
-                        $records[(string) $section['name']][$label]['values'][] = (string) $value;
-                    }
-                }
-            }
-        }
-        $this->records = $records;
-    }
-
-    protected function parseResponseGetUsers($xml)
-    {
-        $records = [];
-        foreach ($xml as $user) {
-            foreach ($user->attributes() as $key => $value) {
-                $records[(string) $user['id']][$key] = (string) $value;
-            }
-            $records[(string) $user['id']]['name'] = (string) $user;
-        }
-        $this->records = $records;
-    }
-
-    protected function parseResponsePostRecords($xml)
-    {
-        $record = [];
-        foreach ($xml->result->recorddetail as $detail) {
-            foreach ($detail->children() as $field) {
-                $record[(string) $field['val']] = (string) $field;
-            }
-            $this->records[] = $record;
-        }
-
-        $this->message = (string) $xml->result->message;
-        if (count($this->records) == 1) {
-            $this->recordId = isset($record['Id']) ? $record['Id'] : null;
-        }
-    }
-
-    protected function parseResponsePostRecordsMultiple($xml)
-    {
-        $records = [];
-        foreach ($xml->result->row as $row) {
-            $no = (string) $row['no'];
-            if (isset($row->success)) {
-                $records[$no]['code'] = (string) $row->success->code;
-                foreach ($row->success->details->children() as $field) {
-                    $records[$no][(string) $field['val']] = (string) $field;
-                }
-            } else {
-                $records[$no]['code'] = (string) $row->error->code;
-                $records[$no]['message'] = (string) $row->error->details;
-            }
-        }
-        ksort($records);
-        $this->records = $records;
+        $data = current($this->responseData);
+        $this->status = $data['status'];
+        $this->recordId = $data['details']['id']?: null;
     }
 }
