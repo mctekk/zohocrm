@@ -80,7 +80,7 @@ class Response
     protected $responseData;
 
     /**
-     * Response Status
+     * Response Status.
      *
      * @var string
      */
@@ -88,7 +88,7 @@ class Response
 
     public function __construct($responseData, $module, $method)
     {
-        $this->responseData = $responseData['data'];
+        $this->responseData = $responseData;
         $this->module = $module;
         $this->method = $method;
         $this->parseResponse();
@@ -163,11 +163,39 @@ class Response
      */
     protected function parseResponse()
     {
-        if ($this->method == 'get') {
+        if ($this->method == 'get' && $this->module == 'Leads') {
             $this->parseResponseGetRecords();
+        } elseif ($this->method == 'get' && $this->module == 'Users') {
+            $this->parseResponseGetUsers();
         } else {
             $this->parseResponsePostRecords();
         }
+    }
+
+    /**
+     * Parse response for function using module Users and GET method.
+     *
+     * @return void
+     */
+    protected function parseResponseGetUsers()
+    {
+        $data = $this->responseData['users'];
+        $records = [];
+        foreach ($data as $dataElement) {
+            foreach ($dataElement as $key => $value) {
+                if (gettype($value) == 'array' && array_key_exists('id', $value)) {
+                    $value = $value['name'];
+                }
+                if (gettype($value) == 'array' && empty($value)) {
+                    $value = null;
+                }
+
+                $record[$key] = $value;
+            }
+            $records[$record['id']] = $record;
+        }
+
+        $this->records = $records;
     }
 
     /**
@@ -178,7 +206,7 @@ class Response
      */
     protected function parseResponseGetRecords(): void
     {
-        $data = $this->responseData;
+        $data = $this->responseData['data'];
         $records = [];
         foreach ($data as $dataElement) {
             foreach ($dataElement as $key => $value) {
@@ -220,8 +248,8 @@ class Response
      */
     protected function parseResponsePostRecords()
     {
-        $data = current($this->responseData);
+        $data = current($this->responseData['data']);
         $this->status = $data['status'];
-        $this->recordId = $data['details']['id']?: null;
+        $this->recordId = $data['details']['id'] ?: null;
     }
 }

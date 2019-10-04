@@ -547,6 +547,26 @@ class ZohoClient
     }
 
     /**
+     * Implements getUsers API method.
+     *
+     *  @param string  $type       type of the user to return. Possible values:
+     *                              AllUsers - all users (both active and inactive)
+     *                              ActiveUsers - only active users
+     *                              DeactiveUsers - only deactivated users
+     *                              AdminUsers - all users with admin privileges
+     *                              ActiveConfirmedAdmins - users with admin privileges that are confirmed
+     * @param int $newFormat  1 (default) - exclude fields with null values in the response
+     *                            2 - include fields with null values in the response
+     *
+     * @return Response The Response object
+     */
+    public function getUsers($type = 'AllUsers', $newFormat = 1)
+    {
+        $params['type'] = $type;
+        return $this->call('get', $params);
+    }
+
+    /**
      * Get the module.
      *
      * @return string
@@ -581,8 +601,14 @@ class ZohoClient
     {
         $defaultHeaders = $this->getDefaultHeaders();
         $uri = array_key_exists('id', $params) ? $this->getRequestURI() . '/' . $params['id'] : $this->getRequestURI();
+
         if (array_key_exists('criteria', $params)) {
             $uri = $this->appendCriteria($uri, $params['criteria']);
+        }
+
+        if (array_key_exists('type', $params) && $this->module == 'Users') {
+            $uri = implode('/', [$this->baseUri, 'crm', self::API_VERSION, lcfirst($this->module)]);
+            $uri = $uri . '?type=' . $params['type'];
         }
         $body = $this->getRequestBody($params, $data, $options);
         $response = $this->client->request(strtoupper($method), $uri, $this->constructRequestParams($defaultHeaders, $body));
