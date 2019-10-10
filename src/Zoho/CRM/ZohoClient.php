@@ -206,7 +206,7 @@ class ZohoClient
      * @param string $authRefreshToken
      * @return void
      */
-    public function setAuthRefreshToken(string $authRefreshToken): void
+    public function setAuthRefreshToken($authRefreshToken)
     {
         $this->authRefreshToken = $authRefreshToken;
     }
@@ -217,7 +217,7 @@ class ZohoClient
      * @param string $authRefreshToken
      * @return void
      */
-    public function getAuthRefreshToken(): string
+    public function getAuthRefreshToken()
     {
         return $this->authRefreshToken;
     }
@@ -228,7 +228,7 @@ class ZohoClient
      * @param string $zohoClientId
      * @return void
      */
-    public function setZohoClientId(string $zohoClientId): void
+    public function setZohoClientId($zohoClientId)
     {
         $this->zohoClientId = $zohoClientId;
     }
@@ -238,7 +238,7 @@ class ZohoClient
      *
      * @return void
      */
-    public function getZohoClientId(): string
+    public function getZohoClientId()
     {
         return $this->zohoClientId;
     }
@@ -249,7 +249,7 @@ class ZohoClient
      * @param string $zohoClientSecret
      * @return void
      */
-    public function setZohoClientSecret(string $zohoClientSecret): void
+    public function setZohoClientSecret($zohoClientSecret)
     {
         $this->zohoClientSecret = $zohoClientSecret;
     }
@@ -259,7 +259,7 @@ class ZohoClient
      *
      * @return void
      */
-    public function getZohoClientSecret(): string
+    public function getZohoClientSecret()
     {
         return $this->zohoClientSecret;
     }
@@ -269,7 +269,7 @@ class ZohoClient
      *
      * @return void
      */
-    public function generateAccessTokenByGrantToken(): void
+    public function generateAccessTokenByGrantToken()
     {
         //Use Guzzle client to make call
         $res = $this->client->post(self::TOKEN_URI, ['query' => $this->authArray, 'verify' => false]);
@@ -685,7 +685,7 @@ class ZohoClient
      * @param string $criteria
      * @return string
      */
-    protected function appendCriteria(string $uri, string $criteria): string
+    protected function appendCriteria($uri, $criteria)
     {
         $equalCriteriaSearch = str_replace(':', ':equals:', $criteria);
         return $uri . '/search?criteria=' . $equalCriteriaSearch;
@@ -696,7 +696,7 @@ class ZohoClient
      *
      * @return array
      */
-    protected function constructRequestParams(array $defaultHeaders, array $body = []): array
+    protected function constructRequestParams($defaultHeaders, $body = [])
     {
         return [
             'headers' => $defaultHeaders,
@@ -715,7 +715,7 @@ class ZohoClient
      *
      * @return string
      */
-    protected function getRequestURI(): string
+    protected function getRequestURI()
     {
         if (empty($this->module)) {
             throw new \RuntimeException('Zoho CRM module is not set.');

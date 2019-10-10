@@ -141,8 +141,7 @@ class Response
             'code' => $this->code,
             'uri' => $this->uri,
             'recordId' => $this->recordId,
-            'records' => $this->records,
-            'xmlstr' => $this->xmlstr,
+            'records' => $this->records
         ];
     }
 
@@ -204,7 +203,7 @@ class Response
      * @param [type] $xml
      * @return void
      */
-    protected function parseResponseGetRecords(): void
+    protected function parseResponseGetRecords()
     {
         $data = $this->responseData['data'];
         $records = [];
