@@ -8,22 +8,11 @@ use Zoho\CRM\ZohoClient;
 
 //ZohoCRM.modules.all,ZohoCRM.users.all --> The scope we need to use now
 
-// $ZohoClient = new ZohoClient(
-//     '1000.3dbd409069479714ed29915121793a9e.9d98d15ef2931510780527f232a4aa9f',
-//     '1000.NCUTHYFLRLZYRX57IMA205E1UBDUFH',
-//     '53d352fd313851fc558de0595039a03950b5d1cba5',
-//     'https://www.zoho.com'
-// );
-
 $ZohoClient = new ZohoClient();
 
 $ZohoClient->setModule('Leads');
 
 // $ZohoClient->generateAccessTokenByGrantToken();
-
-$ZohoClient->setAuthRefreshToken('1000.5c4728219eb163a276d47132143a9257.de9ff3dfb628ca36c22240a5fbb529d8');
-$ZohoClient->setZohoClientId('1000.NCUTHYFLRLZYRX57IMA205E1UBDUFH');
-$ZohoClient->setZohoClientSecret('53d352fd313851fc558de0595039a03950b5d1cba5');
 
 $refresh = $ZohoClient->generateAccessTokenByRefreshToken();
 
