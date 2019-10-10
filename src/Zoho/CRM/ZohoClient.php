@@ -165,7 +165,7 @@ class ZohoClient
      *
      * @var string
      */
-    protected $baseUri;
+    protected $baseUri = 'https://www.zohoapis.com';
 
     /**
      * Construct.
@@ -177,7 +177,7 @@ class ZohoClient
      * @param HttpClientInterface $client HttpClient for connection [optional]
      * @param FactotoryInterface $factory [optional]
      */
-    public function __construct($grantToken, $zohoClientId = null, $zohoClientSecret = null, $zohoRedirectUri = null, HttpClientInterface $client = null, FactoryInterface $factory = null)
+    public function __construct($grantToken = '', $zohoClientId = null, $zohoClientSecret = null, $zohoRedirectUri = null, HttpClientInterface $client = null, FactoryInterface $factory = null)
     {
         $this->format = 'xml';
         $this->client = $client ?: new Client();
@@ -198,6 +198,70 @@ class ZohoClient
         ];
 
         return $this;
+    }
+
+    /**
+     * Set Auth Refresh Token.
+     *
+     * @param string $authRefreshToken
+     * @return void
+     */
+    public function setAuthRefreshToken(string $authRefreshToken): void
+    {
+        $this->authRefreshToken = $authRefreshToken;
+    }
+
+    /**
+     * Get Auth Refresh Token.
+     *
+     * @param string $authRefreshToken
+     * @return void
+     */
+    public function getAuthRefreshToken(): string
+    {
+        return $this->authRefreshToken;
+    }
+
+    /**
+     * Set Client ID.
+     *
+     * @param string $zohoClientId
+     * @return void
+     */
+    public function setZohoClientId(string $zohoClientId): void
+    {
+        $this->zohoClientId = $zohoClientId;
+    }
+
+    /**
+     * Get Client ID.
+     *
+     * @return void
+     */
+    public function getZohoClientId(): string
+    {
+        return $this->zohoClientId;
+    }
+
+    /**
+     * Set Zoho Client Secret.
+     *
+     * @param string $zohoClientSecret
+     * @return void
+     */
+    public function setZohoClientSecret(string $zohoClientSecret): void
+    {
+        $this->zohoClientSecret = $zohoClientSecret;
+    }
+
+    /**
+     * Get Zoho Client Secret.
+     *
+     * @return void
+     */
+    public function getZohoClientSecret(): string
+    {
+        return $this->zohoClientSecret;
     }
 
     /**
@@ -232,8 +296,6 @@ class ZohoClient
             'client_secret' => $this->zohoClientSecret,
             'grant_type' => self::GRANT_TYPE_REFRESH
         ];
-
-        return $authRefreshArray;
 
         //Use Guzzle client to make call
         $res = $this->client->post(self::TOKEN_URI, ['query' => $authRefreshArray, 'verify' => false]);
