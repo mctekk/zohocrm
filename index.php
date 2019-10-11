@@ -14,15 +14,15 @@ $ZohoClient->setModule('Leads');
 
 // $ZohoClient->generateAccessTokenByGrantToken();
 
-$refresh = $ZohoClient->generateAccessTokenByRefreshToken();
+// $refresh = $ZohoClient->generateAccessTokenByRefreshToken();
 
-$response = $ZohoClient->getRecords();
+// $response = $ZohoClient->getRecords();
 
 // $response = $ZohoClient->getRecordById('2896936000050692283');
 
 // $response = $ZohoClient->searchRecords('(Email:testlololololo13@gmail.com)');
 
-// $lead = new Lead();
+$lead = new Lead();
 
 // Receiving request
 // $request = [
@@ -32,9 +32,23 @@ $response = $ZohoClient->getRecords();
 //     'phone' => '4043122124257'
 // ];
 
-// $data = $lead->deserializeXml($lead->serializeXml($request));
+$request = [
+    'Lead_Owner' => 'mark@financefactory.com',
+    'First_Name' => 'disposabile111',
+    'Last_Name' => 'leadtest111',
+    'Lead_Source' => 'Christian Guthermann',
+    'Phone' => '004234253543',
+    'Email' => 'c0000010014@sharklasers.com',
+    'Member' => '23',
+    'Sponsor' => '0000',
+    'Code' => '110100001570806179',
+    'URL' => "https => \/\/api.thefinancefactory.com\/Christian-Guthermann",
+    'Affiliate_RecordE5FID' => 95641000006185231,
+    'Sales_Rep' => 'Mark Ledford'];
 
-// $response = $ZohoClient->insertRecords($data, ['wfTrigger' => 'true']);
+$data = $lead->deserializeXml($lead->serializeXml($request));
+
+$response = $ZohoClient->insertRecords($data, ['wfTrigger' => 'true']);
 // $response = $ZohoClient->updateRecords('2896936000050971263', $data, ['wfTrigger' => 'true']);
 
 // $ZohoClient->setModule('Users');
