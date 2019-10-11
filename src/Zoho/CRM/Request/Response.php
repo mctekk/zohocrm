@@ -249,6 +249,6 @@ class Response
     {
         $data = current($this->responseData['data']);
         $this->status = $data['status'];
-        $this->recordId = $data['details']['id'] ?: null;
+        $this->recordId = array_key_exists('id', $data['details']) ? $data['details']['id'] : null;
     }
 }
