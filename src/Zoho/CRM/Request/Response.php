@@ -205,40 +205,44 @@ class Response
      */
     protected function parseResponseGetRecords()
     {
-        $data = $this->responseData['data'];
-        $records = [];
-        foreach ($data as $dataElement) {
-            foreach ($dataElement as $key => $value) {
-                $key = strpos($key, '_') ? str_replace('_', ' ', $key) : $key;
+        if (array_key_exists('data', $this->responseData)) {
+            $data = $this->responseData['data'];
+            $records = [];
+            foreach ($data as $dataElement) {
+                foreach ($dataElement as $key => $value) {
+                    $key = strpos($key, '_') ? str_replace('_', ' ', $key) : $key;
 
-                if (gettype($value) == 'array' && array_key_exists('id', $value)) {
-                    if ($key == 'Owner') {
-                        $key = 'Lead ' . $key;
-                        $record['SMOWNERID'] = $value['id'];
-                        $value = $value['name'];
-                    } elseif ($key == 'Created By') {
-                        $record['SMCREATORID'] = $value['id'];
-                        $value = $value['name'];
-                    } else {
-                        $record[strtoupper(str_replace(' ', '', $key))] = $value['id'];
-                        $value = $value['name'];
+                    if (gettype($value) == 'array' && array_key_exists('id', $value)) {
+                        if ($key == 'Owner') {
+                            $key = 'Lead ' . $key;
+                            $record['SMOWNERID'] = $value['id'];
+                            $value = $value['name'];
+                        } elseif ($key == 'Created By') {
+                            $record['SMCREATORID'] = $value['id'];
+                            $value = $value['name'];
+                        } else {
+                            $record[strtoupper(str_replace(' ', '', $key))] = $value['id'];
+                            $value = $value['name'];
+                        }
                     }
-                }
 
-                if (gettype($value) == 'array' && empty($value)) {
-                    $value = '';
-                }
+                    if (gettype($value) == 'array' && empty($value)) {
+                        $value = '';
+                    }
 
-                if ($key == 'id') {
-                    $key = 'LEADID';
-                }
+                    if ($key == 'id') {
+                        $key = 'LEADID';
+                    }
 
-                $record[$key] = $value;
+                    $record[$key] = $value;
+                }
+                $records[] = $record;
             }
-            $records[] = $record;
-        }
 
-        $this->records = $records;
+            $this->records = $records;
+        } else {
+            $this->records = null;
+        }
     }
 
     /**
