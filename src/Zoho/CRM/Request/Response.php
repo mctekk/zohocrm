@@ -205,7 +205,7 @@ class Response
      */
     protected function parseResponseGetRecords()
     {
-        if (array_key_exists('data', $this->responseData)) {
+        if (is_array($this->responseData)) {
             $data = $this->responseData['data'];
             $records = [];
             foreach ($data as $dataElement) {
