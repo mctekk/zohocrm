@@ -162,7 +162,7 @@ class Response
      */
     protected function parseResponse()
     {
-        if ($this->method == 'get' && $this->module == 'Leads') {
+        if ($this->method == 'get' && ($this->module == 'Leads' || $this->module == 'Vendors')) {
             $this->parseResponseGetRecords();
         } elseif ($this->method == 'get' && $this->module == 'Users') {
             $this->parseResponseGetUsers();
