@@ -301,7 +301,7 @@ class ZohoClient
         $res = $this->client->post(self::TOKEN_URI, ['query' => $authRefreshArray, 'verify' => false]);
         $auth = json_decode($res->getBody(), true);
 
-        $this->authAccessToken = $auth['access_token'];
+        $this->authAccessToken = array_key_exists('access_token', $auth) ? $auth['access_token'] : $this->authAccessToken;
     }
 
     /**
