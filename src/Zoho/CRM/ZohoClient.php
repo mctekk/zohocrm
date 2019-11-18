@@ -223,6 +223,16 @@ class ZohoClient
     }
 
     /**
+     * Get Access Token.
+     *
+     * @return void
+     */
+    public function getAccessToken()
+    {
+        return $this->authAccessToken;
+    }
+
+    /**
      * Get Auth Refresh Token.
      *
      * @param string $authRefreshToken
