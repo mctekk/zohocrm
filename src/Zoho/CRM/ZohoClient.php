@@ -19,6 +19,7 @@ use Zoho\CRM\Wrapper\Element;
 use GuzzleHttp\Client;
 use Exception;
 use SimpleXMLElement;
+use Datetime;
 
 /**
  * Client for provide interface with Zoho CRM.
@@ -323,6 +324,28 @@ class ZohoClient
         $auth = json_decode($res->getBody(), true);
 
         $this->authAccessToken = array_key_exists('access_token', $auth) ? $auth['access_token'] : $this->authAccessToken;
+    }
+
+    /**
+     * Manage Zoho Access Token from Redis.
+     *
+     * @param [type] $redis
+     * @return void
+     */
+    public function manageAccessTokenRedis($redis)
+    {
+        $currentDate = new Datetime();
+        $currentDate->setTime(0, 0);
+        $formatedCurrentDate = strtotime($currentDate->format('Y-m-d H:i:s'));
+        $diffDate = $formatedCurrentDate - $redis->get('zoho_token_issued_time');
+
+        if ($redis->exists('zoho_token') && ($diffDate < 3600)) {
+            $this->setAccessToken($redis->get('zoho_token'));
+        } else {
+            $this->generateAccessTokenByRefreshToken();
+            $redis->set('zoho_token', $this->getAccessToken());
+            $redis->set('zoho_token_issued_time', $formatedCurrentDate);
+        }
     }
 
     /**
