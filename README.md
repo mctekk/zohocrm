@@ -47,7 +47,6 @@ The above values of the **$request** array can be taken from POST if you are usi
 - Name with space between words, space is substituted by an "_".
 - Need to clean(unset) from the array all the values that are not part of the entity, if you dont wanna make this, create another clean array.
 
-```
 Now the next part is interact with zoho api using the client, first thing, create a `ZohoClient` with your authtoken valid: **Set the module**, for now just Leads, on future or contributing the [missing modules](https://www.zoho.com/crm/help/api/modules-fields.html)
 
 ```php
