@@ -10,7 +10,7 @@ Installation
 
 Using composer, execute the following command to add the requirement to your `composer.json`
 
-    $ composer require mctekk/zohocrm:^1.0@dev
+    $ composer require mctekk/zohocrm:^0.1
 
 Let's start
 -----------
