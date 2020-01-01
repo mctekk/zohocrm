@@ -26,7 +26,8 @@
     ],
     "require": {
         "php": ">=5.5",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "ext-redis": ">=2.2.7"
     },
     "autoload": {
         "psr-4": {
@@ -35,7 +36,9 @@
     },
     "require-dev": {
         "codeception/verify": "^0.1",
-        "friendsofphp/php-cs-fixer": "^2.2"
+        "codeception/codeception": "^2.4",
+        "friendsofphp/php-cs-fixer": "^2.2",
+        "vlucas/phpdotenv": "^4.1"
     },
     "extra": {
         "branch-alias": {

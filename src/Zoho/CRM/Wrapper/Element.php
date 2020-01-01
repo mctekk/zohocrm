@@ -53,7 +53,7 @@ abstract class Element
      * @param string $xmlstr XML string to convert on object
      *
      * @throws Exception If xml data could not be parsed
-     *
+     * @deprecated version 1
      * @return bool
      */
     final public function deserializeXml($data)
@@ -68,12 +68,24 @@ abstract class Element
      *
      * @param array $fields Fields to convert
      *
-     * @return string
+     * @return array
+     * @deprecated version 1
      *
      * @todo
      * - Verify if the property exist on entity before send to zoho
      */
     final public function serializeXml(array $fields)
+    {
+        return $this->cleanParams($fields);
+    }
+
+    /**
+     * Given an input array for zoho clean the keys to match zoho needs.
+     *
+     * @param array $fields
+     * @return array
+     */
+    public function cleanParams(array $fields)
     {
         $output = [];
         foreach ($fields as $key => $value) {

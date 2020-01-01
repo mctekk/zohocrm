@@ -20,6 +20,7 @@ use GuzzleHttp\Client;
 use Exception;
 use SimpleXMLElement;
 use Datetime;
+use Redis;
 
 /**
  * Client for provide interface with Zoho CRM.
@@ -329,10 +330,10 @@ class ZohoClient
     /**
      * Manage Zoho Access Token from Redis.
      *
-     * @param [type] $redis
+     * @param Redis $redis
      * @return void
      */
-    public function manageAccessTokenRedis($redis)
+    public function manageAccessTokenRedis(Redis $redis)
     {
         $currentDate = new Datetime();
         $currentDate->setTime(0, 0);
