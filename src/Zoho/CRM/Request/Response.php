@@ -95,57 +95,22 @@ class Response
     }
 
     /**
-     * Setters & Getters.
+     * Is successfull.
+     *
+     * @deprecated 1.0
+     * @return void
      */
-    public function getModule()
-    {
-        return $this->module;
-    }
-
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    public function getRequestURI()
-    {
-        return $this->uri;
-    }
-
-    public function getRecords()
-    {
-        return $this->records;
-    }
-
-    public function getRelatedRecords()
-    {
-        return $this->records;
-    }
-
-    public function getRecordId()
-    {
-        return $this->recordId;
-    }
-
-    public function getResponse()
-    {
-        return [
-            'module' => $this->module,
-            'method' => $this->method,
-            'message' => $this->message,
-            'code' => $this->code,
-            'uri' => $this->uri,
-            'recordId' => $this->recordId,
-            'records' => $this->records
-        ];
-    }
-
     public function ifSuccess()
+    {
+        return $this->isSuccess();
+    }
+
+    /**
+     * Is successfull.
+     *
+     * @return bool
+     */
+    public function isSuccess()
     {
         if (mb_strpos($this->status, 'success') !== false) {
             return true;
@@ -254,5 +219,61 @@ class Response
         $data = current($this->responseData['data']);
         $this->status = $data['status'];
         $this->recordId = array_key_exists('id', $data['details']) ? $data['details']['id'] : null;
+    }
+
+    /**
+    * Setters & Getters.
+    */
+    public function getModule()
+    {
+        return $this->module;
+    }
+
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    public function getRequestURI()
+    {
+        return $this->uri;
+    }
+
+    public function getRecords()
+    {
+        return $this->records;
+    }
+
+    public function getResponseData()
+    {
+        return $this->responseData;
+    }
+
+    public function getRelatedRecords()
+    {
+        return $this->records;
+    }
+
+    public function getRecordId()
+    {
+        return $this->recordId;
+    }
+
+    public function getResponse()
+    {
+        return [
+            'module' => $this->module,
+            'method' => $this->method,
+            'message' => $this->message,
+            'code' => $this->code,
+            'uri' => $this->uri,
+            'recordId' => $this->recordId,
+            'records' => $this->records
+        ];
     }
 }
