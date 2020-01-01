@@ -39,6 +39,8 @@ $request = array(
 $lead = new Lead();
 $data = $lead->cleanParams($request);
 
+```
+
 The above values of the **$request** array can be taken from POST if you are using forms in landing page :D, just be sure that all the keys(name of the field on html) in the array have to be valid properties in the entity Lead of zoho, default properties can be found on documentation [here](https://www.zoho.com/crm/help/api/modules-fields.html#Leads) or make sure that those properties exist in your account if you custom your Lead on Zoho; the following convention are made:
 
 - Name of fields are not CamelCase.
