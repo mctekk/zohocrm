@@ -1,0 +1,30 @@
+language: php
+php:
+- 7.2
+- 7.3
+services:
+- redis-server
+sudo: false
+env:
+  global:
+  - REDIS_HOST: 127.0.0.1
+  - REDIS_PORT: 6379
+cache:
+  directories:
+  - vendor
+  - "$HOME/.composer/cache"
+  - "~/cphalcon"
+install:
+- composer self-update
+- cd ~/ && rm -rf cphalcon && git clone -b 3.4.x -q --depth=1 https://github.com/phalcon/cphalcon.git
+  && cd cphalcon/build && ./install
+- echo 'extension = "phalcon.so"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+- echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+- php --ri phalcon
+before_script:
+- cd $TRAVIS_BUILD_DIR
+- sudo redis-server /etc/redis/redis.conf --port 6379
+- composer install --no-interaction
+- composer update --no-interaction
+script:
+- "./vendor/bin/codecept run unit"
