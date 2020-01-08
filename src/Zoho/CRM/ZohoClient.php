@@ -718,8 +718,9 @@ class ZohoClient
             $uri = $uri . '?type=' . $params['type'];
         }
         $body = $this->getRequestBody($params, $data, $options);
-        $response = $this->client->request(strtoupper($method), $uri, $this->constructRequestParams($defaultHeaders, $body));
-        $responseData = json_decode($response->getBody(), true);
+        $request = $this->client->createRequest(strtoupper($method), $uri, $this->constructRequestParams($defaultHeaders, $body));
+        $response = $this->client->send($request);
+        $responseData = $response->json();
         return $this->factory->createResponse($responseData, $this->module, $method);
     }
 
