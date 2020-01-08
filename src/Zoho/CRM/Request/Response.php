@@ -216,7 +216,8 @@ class Response
      */
     protected function parseResponsePostRecords()
     {
-        $data = current($this->responseData['data']);
+        $responseData = current($this->responseData);
+        $data = current($responseData['data']);
         $this->status = $data['status'];
         $this->recordId = array_key_exists('id', $data['details']) ? $data['details']['id'] : null;
     }
