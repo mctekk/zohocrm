@@ -127,7 +127,7 @@ class Response
      */
     protected function parseResponse()
     {
-        if ($this->method == 'get' && ($this->module == 'Leads' || $this->module == 'Vendors')) {
+        if ($this->method == 'get' && ($this->module == 'Contacts' || $this->module == 'Accounts' || $this->module == 'Potentials')) {
             $this->parseResponseGetRecords();
         } elseif ($this->method == 'get' && $this->module == 'Users') {
             $this->parseResponseGetUsers();
