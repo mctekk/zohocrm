@@ -177,27 +177,27 @@ class Response
                 foreach ($dataElement as $key => $value) {
                     $key = strpos($key, '_') ? str_replace('_', ' ', $key) : $key;
 
-                    if (gettype($value) == 'array' && array_key_exists('id', $value)) {
-                        if ($key == 'Owner') {
-                            $key = 'Lead ' . $key;
-                            $record['SMOWNERID'] = $value['id'];
-                            $value = $value['name'];
-                        } elseif ($key == 'Created By') {
-                            $record['SMCREATORID'] = $value['id'];
-                            $value = $value['name'];
-                        } else {
-                            $record[strtoupper(str_replace(' ', '', $key))] = $value['id'];
-                            $value = $value['name'];
-                        }
-                    }
+                    // if (gettype($value) == 'array' && array_key_exists('id', $value)) {
+                    //     if ($key == 'Owner') {
+                    //         $key = 'Lead ' . $key;
+                    //         $record['SMOWNERID'] = $value['id'];
+                    //         $value = $value['name'];
+                    //     } elseif ($key == 'Created By') {
+                    //         $record['SMCREATORID'] = $value['id'];
+                    //         $value = $value['name'];
+                    //     } else {
+                    //         $record[strtoupper(str_replace(' ', '', $key))] = $value['id'];
+                    //         $value = $value['name'];
+                    //     }
+                    // }
 
-                    if (gettype($value) == 'array' && empty($value)) {
-                        $value = '';
-                    }
+                    // if (gettype($value) == 'array' && empty($value)) {
+                    //     $value = '';
+                    // }
 
-                    if ($key == 'id') {
-                        $key = 'LEADID';
-                    }
+                    // if ($key == 'id') {
+                    //     $key = 'LEADID';
+                    // }
 
                     $record[$key] = $value;
                 }
