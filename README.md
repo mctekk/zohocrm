@@ -30,7 +30,7 @@ Zoho API V2 has change the wey they handle connecto to the API,  it now uses OAu
   - redirect_uri : {redirect_uri}
   - code : {code}
 - This final request will provide you with the refresh_token .
-  - Take into consideration refresh_token could be consider the identifier of the zoho account you are interacting with
+  - **Take into consideration refresh_token could be consider the identifier of the zoho account you are interacting with**
 - Set client_id, client_secret and refresh_token on .env and the package will handle the rest
 
 **Todo** In future version we will add the refresh_token generator directly as a php script
