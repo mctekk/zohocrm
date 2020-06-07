@@ -15,7 +15,7 @@ Using composer, execute the following command to add the requirement to your `co
 Let's start
 -----------
 
-Zoho API V2 has change the wey they handle connecto to the API,  it now uses OAuth instead of just simple private and public keys we usted to have in v1. So you will need to do the following to get this library to work
+Zoho API V2 has change the wey they handle connecto to the API,  it now uses OAuth instead of just simple private and public keys. So you will have to do the following things to get this package to work with your app
 
 - Register a Zoho Client via its Developer Console [https://api-console.zoho.com/]
 - Make sure to elect Web Based App and Follow this tutorial https://www.zoho.com/crm/developer/docs/api/register-client.html
