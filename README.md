@@ -1,4 +1,4 @@
-Zoho CRM library for PHP
+**Zoho** CRM library for PHP
 =============================
 
 The Zoho CRM library is a simple wrapper around Zoho API
