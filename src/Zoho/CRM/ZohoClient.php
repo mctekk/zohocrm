@@ -11,16 +11,16 @@
 
 namespace Zoho\CRM;
 
+use Datetime;
+use Exception;
+use GuzzleHttp\Client;
+use InvalidArgumentException;
+use Redis;
 use Zoho\CRM\Common\FactoryInterface;
 use Zoho\CRM\Common\HttpClientInterface;
 use Zoho\CRM\Request\Factory;
 use Zoho\CRM\Request\HttpClient;
-use Zoho\CRM\Wrapper\Element;
-use GuzzleHttp\Client;
-use Exception;
-use SimpleXMLElement;
-use Datetime;
-use Redis;
+use Zoho\CRM\Request\Response;
 
 /**
  * Client for provide interface with Zoho CRM.
@@ -179,8 +179,14 @@ class ZohoClient
      * @param HttpClientInterface $client HttpClient for connection [optional]
      * @param FactotoryInterface $factory [optional]
      */
-    public function __construct($grantToken = '', $zohoClientId = null, $zohoClientSecret = null, $zohoRedirectUri = null, HttpClientInterface $client = null, FactoryInterface $factory = null)
-    {
+    public function __construct(
+        $grantToken = '',
+        $zohoClientId = null,
+        $zohoClientSecret = null,
+        $zohoRedirectUri = null,
+        HttpClientInterface $client = null,
+        FactoryInterface $factory = null
+    ) {
         $this->format = 'xml';
         $this->client = $client ?: new Client();
         $this->factory = $factory ?: new Factory();
@@ -206,9 +212,10 @@ class ZohoClient
      * Set Auth Refresh Token.
      *
      * @param string $authRefreshToken
+     *
      * @return void
      */
-    public function setAuthRefreshToken($authRefreshToken)
+    public function setAuthRefreshToken($authRefreshToken) : void
     {
         $this->authRefreshToken = $authRefreshToken;
     }
@@ -217,9 +224,10 @@ class ZohoClient
      * Set Access Token.
      *
      * @param string $authAccessToken
+     *
      * @return void
      */
-    public function setAccessToken($authAccessToken)
+    public function setAccessToken($authAccessToken) : void
     {
         $this->authAccessToken = $authAccessToken;
     }
@@ -229,7 +237,7 @@ class ZohoClient
      *
      * @return void
      */
-    public function getAccessToken()
+    public function getAccessToken() : string
     {
         return $this->authAccessToken;
     }
@@ -238,9 +246,10 @@ class ZohoClient
      * Get Auth Refresh Token.
      *
      * @param string $authRefreshToken
+     *
      * @return void
      */
-    public function getAuthRefreshToken()
+    public function getAuthRefreshToken() : string
     {
         return $this->authRefreshToken;
     }
@@ -249,9 +258,10 @@ class ZohoClient
      * Set Client ID.
      *
      * @param string $zohoClientId
+     *
      * @return void
      */
-    public function setZohoClientId($zohoClientId)
+    public function setZohoClientId($zohoClientId) : void
     {
         $this->zohoClientId = $zohoClientId;
     }
@@ -261,7 +271,7 @@ class ZohoClient
      *
      * @return void
      */
-    public function getZohoClientId()
+    public function getZohoClientId() : string
     {
         return $this->zohoClientId;
     }
@@ -270,9 +280,10 @@ class ZohoClient
      * Set Zoho Client Secret.
      *
      * @param string $zohoClientSecret
+     *
      * @return void
      */
-    public function setZohoClientSecret($zohoClientSecret)
+    public function setZohoClientSecret($zohoClientSecret) : void
     {
         $this->zohoClientSecret = $zohoClientSecret;
     }
@@ -282,7 +293,7 @@ class ZohoClient
      *
      * @return void
      */
-    public function getZohoClientSecret()
+    public function getZohoClientSecret() : string
     {
         return $this->zohoClientSecret;
     }
@@ -292,7 +303,7 @@ class ZohoClient
      *
      * @return void
      */
-    public function generateAccessTokenByGrantToken()
+    public function generateAccessTokenByGrantToken() : void
     {
         //Use Guzzle client to make call
         $res = $this->client->post(self::TOKEN_URI, ['query' => $this->authArray, 'verify' => false]);
@@ -311,7 +322,7 @@ class ZohoClient
      *
      * @return void
      */
-    public function generateAccessTokenByRefreshToken()
+    public function generateAccessTokenByRefreshToken() : void
     {
         $authRefreshArray = [
             'refresh_token' => $this->authRefreshToken,
@@ -331,21 +342,23 @@ class ZohoClient
      * Manage Zoho Access Token from Redis.
      *
      * @param Redis $redis
+     *
      * @return void
      */
-    public function manageAccessTokenRedis(Redis $redis)
+    public function manageAccessTokenRedis(Redis $redis, string $key = 'zoho_token') : void
     {
         $currentDate = new Datetime();
         $currentDate->setTime(0, 0);
-        $formatedCurrentDate = strtotime($currentDate->format('Y-m-d H:i:s'));
-        $diffDate = $formatedCurrentDate - $redis->get('zoho_token_issued_time');
+        $formattedCurrentDate = strtotime($currentDate->format('Y-m-d H:i:s'));
+        $diffDate = $formattedCurrentDate - $redis->get($key . '_issued_time');
 
-        if ($redis->exists('zoho_token') && ($diffDate < 3600)) {
-            $this->setAccessToken($redis->get('zoho_token'));
+        //only refresh the token before 1h pass
+        if ($redis->exists($key) && ($diffDate < 3300)) {
+            $this->setAccessToken($redis->get($key));
         } else {
             $this->generateAccessTokenByRefreshToken();
-            $redis->set('zoho_token', $this->getAccessToken());
-            $redis->set('zoho_token_issued_time', $formatedCurrentDate);
+            $redis->set($key, $this->getAccessToken());
+            $redis->set($key . '_issued_time', $formattedCurrentDate);
         }
     }
 
@@ -353,9 +366,10 @@ class ZohoClient
      * Sets the http client's default headers.
      *
      * @return void
+     *
      * @todo Give more options on default header by passing an array.
      */
-    public function getDefaultHeaders()
+    public function getDefaultHeaders() : array
     {
         $this->generateAccessTokenByRefreshToken();
         return [
@@ -389,7 +403,7 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function convertLead($leadId, $data, $params = [], $options = [])
+    public function convertLead($leadId, $data, $params = [], $options = []) : Response
     {
         $params['leadId'] = $leadId;
 
@@ -415,7 +429,7 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function getCVRecords($name, $params = [], $options = [])
+    public function getCVRecords($name, $params = [], $options = []) : Response
     {
         $params['cvName'] = $name;
 
@@ -427,7 +441,7 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function getFields()
+    public function getFields() : Response
     {
         return $this->call('getFields', []);
     }
@@ -440,7 +454,7 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function deleteRecords($id)
+    public function deleteRecords($id) : Response
     {
         if (is_array($id)) {
             $params['idlist'] = implode(';', $id);
@@ -465,7 +479,7 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function getRecordById($id, $params = [], $options = [])
+    public function getRecordById($id, $params = [], $options = []) : Response
     {
         if (is_array($id)) {
             $params['idlist'] = implode(';', $id);
@@ -497,7 +511,7 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function getRecords($params = [], $options = [])
+    public function getRecords($params = [], $options = []) : Response
     {
         return $this->call('get', $params);
     }
@@ -522,7 +536,7 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function getSearchRecords($searchCondition, $params = [], $options = [])
+    public function getSearchRecords($searchCondition, $params = [], $options = []) : Response
     {
         $params['searchCondition'] = $searchCondition;
         if (empty($params['selectColumns'])) {
@@ -551,7 +565,7 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function searchRecords($criteria, $params = [], $options = [])
+    public function searchRecords($criteria, $params = [], $options = []) : Response
     {
         $params['criteria'] = $criteria;
         if (empty($params['selectColumns'])) {
@@ -586,7 +600,7 @@ class ZohoClient
      *
      * @todo
      */
-    public function insertRecords($data, $params = [], $options = [])
+    public function insertRecords($data, $params = [], $options = []) : Response
     {
         return $this->call('post', $params, $data, $options);
     }
@@ -609,10 +623,10 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function updateRecords($id, $data, $params = [], $options = [])
+    public function updateRecords($id, $data, $params = [], $options = []) : Response
     {
         if (empty($id)) {
-            throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
+            throw new InvalidArgumentException('Record Id is required and cannot be empty.');
         }
         $params['id'] = $id;
         return $this->call('put', $params, $data, $options);
@@ -634,10 +648,10 @@ class ZohoClient
      *
      * @return Response The Response object
      */
-    public function uploadFile($id, $content, $params = [])
+    public function uploadFile($id, $content, $params = []) : Response
     {
         if (empty($id)) {
-            throw new \InvalidArgumentException('Record Id is required and cannot be empty.');
+            throw new InvalidArgumentException('Record Id is required and cannot be empty.');
         }
         $params['id'] = $id;
 
@@ -702,9 +716,10 @@ class ZohoClient
      * @param array $options Options to add for configurations [optional]
      *
      * @todo Modify createResponse so that it gives the same response regardless of how the response is structured
+     *
      * @return Response
      */
-    protected function call($method, $params = [], $data = [], $options = [])
+    protected function call($method, $params = [], $data = [], $options = []) : Response
     {
         $defaultHeaders = $this->getDefaultHeaders();
         $uri = array_key_exists('id', $params) ? $this->getRequestURI() . '/' . $params['id'] : $this->getRequestURI();
@@ -718,8 +733,15 @@ class ZohoClient
             $uri = $uri . '?type=' . $params['type'];
         }
         $body = $this->getRequestBody($params, $data, $options);
-        $response = $this->client->request(strtoupper($method), $uri, $this->constructRequestParams($defaultHeaders, $body));
+        
+        $response = $this->client->request(
+            strtoupper($method),
+            $uri,
+            $this->constructRequestParams($defaultHeaders, $body)
+        );
+
         $responseData = json_decode($response->getBody(), true);
+
         return $this->factory->createResponse($responseData, $this->module, $method);
     }
 
@@ -728,6 +750,7 @@ class ZohoClient
      *
      * @param string $uri
      * @param string $criteria
+     *
      * @return string
      */
     protected function appendCriteria($uri, $criteria)

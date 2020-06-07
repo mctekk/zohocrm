@@ -1,0 +1,40 @@
+language: php
+php:
+- 7.2
+- 7.3
+- 7.4
+services:
+- mysql
+- redis-server
+sudo: false
+env:
+  global:
+  - DATA_API_MYSQL_HOST: 127.0.0.1
+  - DATA_API_MYSQL_NAME: bakatest
+  - DATA_API_MYSQL_USER: root
+  - DATA_API_MYSQL_PASS: 
+  - REDIS_HOST: 127.0.0.1
+  - REDIS_PORT: 6379
+  - PHINX_CONFIG_DIR: "/home/scrutinizer/build/storage"
+  - secure: Zc6m/dyXQHl1OqKvbbIjqnYsHyEhlxRqqWZW3yhn0YQ9dOShi7rX08kHgDItaSFSNgFnXT3v+mHNulxaRTCUBDPhcSsqQ7KjFDzjLmPd/ThqkkIAFZhNtQQuvbtCzhtsGlOgIPT6GlS0qy/aj7RUY+Kc8xCi0QHWVKCrLaOrXdYbLPnarwTaDbf8DT0S3KewsyFJLV63bTOhAYJ4XvAgR77R90rclelaarlx0BdHJa3w4Wd3gs/flpD9A76CmHspQ5xBavAsH8jQlPd2uAFWfOSczxCIUwP0+gArVvda6Dt3wUg0lgAHh2Lb0KL7kNN1MbPDPSVAcjjfbgeBpU5XMf56afgW9v3eI3fUpA7yEAX+BJjWtTQTzMxP9Bk3cJGjSgEg7jPzc3yAw4hvl5Im/L+0+mbCym51XYC3B70ZyGhbl2vI/W9Qqtp3VjrWmjk+aJdLnjbds1+YQ4Ir6tRuxGpzqAUxBqWvKHEU2rRpyE2rFEYKQUZ0e3YVpVp+8grfKqlYDcamFbYZ7qcmlBm9Cd7pq0k54aWfXyT5xsfsunpcuh2gGYLvZUPIzzO19bM8rl/AYnbD0mkyt122HBGGU9BmbACeQaorHdy+1duQCia/UZVjU2FFr+m/9evXiSfPrpUhnxfnw86Tn5duVMDACNGH/74A07A0fR78kShnERM=
+  - secure: UarWixY62dHt8cSAJf0b1cUYOzbw+mrh2vMrravEc3LjuNk/pOrsQ54E30xTQ1amqVYCbBT+LquSIjhpziq+kDCXAHcQo7Hyca9oduKUAipxa19+7GT9nLQ4SkdgJ9SccfrpmovdHs6SpM83uuTEgsQ6UIflyj9mcfwmOHQJXd+2U/bPK7ncqnm1zQdJ4J/W/brsuzpJxjl+loqIIMyb+cma4tSoNuSp1GCQTAfRPgsNe1zqmYHvGQxG9nwvzjNyiU6dApWE9cAxIhwmU0NDpG4coJs3VzOrZGwFdeG7Y2Y3VHAo9rGwMm+ReifhjJ/djYQBsrf294muml6OFrB7VGroBPiXGt2j4x7U4Xbf76n06swzKNKHX16AGA5VAWWd66ypo6r1hAqaN/VyKMc1LjsLewgB0HrY05zURcq6WfIgw01WGKBMeefUBhMsSvm0kdh3VCGy1lG3C7B6ld02JmLcXVjCvc6Jt1wsgddQmeBADcUbOPo8DvGrIi0ok9B6aT6pTAkujntz/FePYfIbqnrUmLdw5HUzoWzgVtGnxG69iuKTJ5eh2+mD/Y2kWxb4Weyg2t7wQCSbH/VTHZqzG6YcvFabkeKgRlppK3kukh9A9ziUFwYIW5te+NADUwWWEp6AP2eXTmHnEqpDXN2fywK2+hGKF2KOmAJAGyXhK/Q=
+cache:
+  directories:
+  - vendor
+  - "$HOME/.composer/cache"
+install:
+- composer self-update
+- echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+- php --ri redis
+before_script:
+- cd $TRAVIS_BUILD_DIR
+- cp .env.example .env
+- mysql -e "CREATE DATABASE bakatest"
+- sudo redis-server /etc/redis/redis.conf --port 6379
+- composer install --no-interaction
+- composer update --no-interaction
+script:
+- "./vendor/bin/codecept run"
+notifications:
+  slack:
+    secure: gb5iXAe2yHGSIuYf3MxsHiKzxWzS2l1AZtouAXztlQaNjvBPGy7gJ3Y/D4MOOLeEr3XUGgeshnnQCV8wj6yxPOGfCmayDB4mtW18oDGrazvixuNCTJ/RegsKo3AyLHP5mJSnC4p1ngO0+U2IarFYU7c9rFBxLo0KRXjo7IMqIwFrOoCKSBE6cMdUgFbYVpaKDsVNDG7hmWy8Xj/ryzmufSDfNmDt2f6g1iL7/PZMoaI1AtyZqGC3m9TDwSg3+jr1Lds0XwccwbM/Tu4xsKsfn9gYQbAQVy3WdL8GtTpnXuGK09/IvdWG8hFu2oG7LtjfPQtPhqWJY05mbhlsI2k4gaMJV9PTmLPCitXmY1BO51cYNCvQnpBoPOJ5GMLpep7bBlxz2Nu/FzaHf1d8nEL+89KoduZKLS0bIzYRp1qrUbuuuWTg/jlBZCrQywGS/XwFhM7wBf6ZBD2f4F9ogYYBPyhYU4gzPVIfEIvpzZxoEMMPbqJ/mI2U3l/z1iHWOYQMmvoKQaH2/r9ZdZVNUBdhmjKaJJPUbwBodsasT3+f/1pO9eb/RqTIwn7H+/fEyexY/oPFBhIZHYSbrbwSfGAdAs0cwRs/iiDYfGpBgRQAcrkSAC6lbAIRAHUN0DljJi6Gi5yMotlg91Fq5WISL5iBtqmlzttkWvMOQqBJ1SUv3tU=

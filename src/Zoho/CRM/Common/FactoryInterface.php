@@ -12,18 +12,18 @@
 namespace Zoho\CRM\Common;
 
 /**
- * Common interface for create response
+ * Common interface for create response.
  *
  * @version 1.0.0
  */
 interface FactoryInterface
 {
     /**
-     * Creates Response object
+     * Creates Response object.
      *
-     * @param mixed $xml
+     * @param mixed $responseData
      * @param mixed $module
      * @param mixed $method
      */
-    public function createResponse($xml, $module, $method);
+    public function createResponse(array $responseData, string $module, string $method);
 }

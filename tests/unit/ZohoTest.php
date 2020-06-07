@@ -3,53 +3,69 @@
 use Zoho\CRM\Entities\Lead;
 use Zoho\CRM\ZohoClient;
 
-class ZohoTest extends \PHPUnit_Framework_TestCase
+class ZohoTest extends PHPUnit_Framework_TestCase
 {
+    protected $zohoClient;
+    protected $redis;
+    protected $faker;
+
     /**
-     * To avoid having to update code from client using old version of the lib
-     * we still use deserilized and serialized even if they are no longer neede.
+     * Init the test
      *
      * @return void
      */
-    public function testBackwardsCompatibilityInsert()
+    public function setUp(): void
     {
-        $ZohoClient = new ZohoClient();
+        $this->zohoClient = new ZohoClient();
 
-        $ZohoClient->setAuthRefreshToken(getenv('ZOHO_AUTH_REFRESH_TOKEN'));
-        $ZohoClient->setZohoClientId(getenv('ZOHO_CLIENT_ID'));
-        $ZohoClient->setZohoClientSecret(getenv('ZOHO_CLIENT_SECRET'));
-        $refresh = $ZohoClient->generateAccessTokenByRefreshToken();
+        $this->zohoClient->setAuthRefreshToken(getenv('ZOHO_AUTH_REFRESH_TOKEN'));
+        $this->zohoClient->setZohoClientId(getenv('ZOHO_CLIENT_ID'));
+        $this->zohoClient->setZohoClientSecret(getenv('ZOHO_CLIENT_SECRET'));
 
-        $ZohoClient->setModule('Leads');
+        $this->redis = new Redis();
+        $this->redis->connect(getenv('REDIS_HOST'), getenv('REDIS_PORT'));
+
+    }
+
+    /**
+     * To avoid having to update code from client using old version of the lib
+     * we still use deserialized and serialized even if they are no longer needed.
+     *
+     * @return void
+     */
+    public function testBackwardCompatibility()
+    {
+        $this->faker = Faker\Factory::create();
+
+        $refresh = $this->zohoClient->generateAccessTokenByRefreshToken();
+        $this->zohoClient->setModule('Leads');
 
         $lead = new Lead();
 
         $request = [
-            // 'Owner' => 'mark@financefactory.com',
-            'Owner' => '2896936000004024001',
-            'First_Name' => 'disposabile111',
-            'Last_Name' => 'leadtest111',
-            'Lead_Source' => 'Christian Guthermann',
-            'Phone' => '22223425363447',
-            'Email' => 'c00000exa29@sharklasers.com',
+            'First_Name' => $this->faker->firstName,
+            'Last_Name' => $this->faker->lastName,
+            'Lead_Source' => $this->faker->name,
+            'Phone' => $this->faker->phoneNumber,
+            'Email' => $this->faker->email,
             'Member' => '33',
             'Sponsor' => '0000',
-            'Code' => '110100001570806179',
-            'URL_1' => 'https://lp.thefinancefactory.com/lp/r/23',
+            'URL_1' => $this->faker->url,
             'Affiliate_RecordE5FID' => 95641000006185231,
-            'Sales_Rep' => 'Mark Ledford',
+            'Sales_Rep' => $this->faker->name,
             'Available Collateral' => json_decode(json_encode(['real estate,stock portfolio']), true)
         ];
 
         $data = $lead->deserializeXml($lead->serializeXml($request));
 
-        $response = $ZohoClient->insertRecords(
+        $response = $this->zohoClient->insertRecords(
             $data,
             ['wfTrigger' => 'true']
         );
 
         $this->assertTrue($response->isSuccess());
         $this->assertTrue(!empty($response->getRecordId()));
+        $this->assertTrue(is_array($response->getResponseData()));
     }
 
     /**
@@ -59,60 +75,73 @@ class ZohoTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateRecord()
     {
-        $ZohoClient = new ZohoClient();
+        $this->faker = Faker\Factory::create();
 
-        $ZohoClient->setAuthRefreshToken(getenv('ZOHO_AUTH_REFRESH_TOKEN'));
-        $ZohoClient->setZohoClientId(getenv('ZOHO_CLIENT_ID'));
-        $ZohoClient->setZohoClientSecret(getenv('ZOHO_CLIENT_SECRET'));
-        $refresh = $ZohoClient->generateAccessTokenByRefreshToken();
-
-        $ZohoClient->setModule('Leads');
+        $refresh = $this->zohoClient->generateAccessTokenByRefreshToken();
+        $this->zohoClient->setModule('Leads');
 
         $lead = new Lead();
 
         $request = [
-            // 'Owner' => 'mark@financefactory.com',
-            'Owner' => '2896936000004024001',
-            'First_Name' => 'disposabile111',
-            'Last_Name' => 'leadtest111',
-            'Lead_Source' => 'Christian Guthermann',
-            'Phone' => '22223425363447',
-            'Email' => 'c00000exa29@sharklasers.com',
+            'First_Name' => $this->faker->firstName,
+            'Last_Name' => $this->faker->lastName,
+            'Lead_Source' => $this->faker->name,
+            'Phone' => $this->faker->phoneNumber,
+            'Email' => $this->faker->email,
             'Member' => '33',
             'Sponsor' => '0000',
-            'Code' => '110100001570806179',
-            'URL_1' => 'https://lp.thefinancefactory.com/lp/r/23',
+            'URL_1' => $this->faker->url,
             'Affiliate_RecordE5FID' => 95641000006185231,
-            'Sales_Rep' => 'Mark Ledford',
+            'Sales_Rep' => $this->faker->name,
             'Available Collateral' => json_decode(json_encode(['real estate,stock portfolio']), true)
         ];
 
-        //$data = $lead->deserializeXml($lead->serializeXml($request));
-
-        $response = $ZohoClient->insertRecords(
-            $lead->cleanParams($request),
+        $response = $this->zohoClient->insertRecords(
+            $request,
             ['wfTrigger' => 'true']
         );
 
         $this->assertTrue($response->isSuccess());
         $this->assertTrue(!empty($response->getRecordId()));
+        $this->assertTrue(is_array($response->getResponseData()));
     }
 
     /**
-     * Setup the Test.
+     * Create a new record.
      *
      * @return void
      */
-    protected function setUp()
+    public function testCreateRecordWithRedis()
     {
+        $this->faker = Faker\Factory::create();
+
+        $refresh = $this->zohoClient->manageAccessTokenRedis($this->redis, 'test_zoho');
+        $this->zohoClient->setModule('Leads');
+
+        $lead = new Lead();
+
+        $request = [
+            'First_Name' => $this->faker->firstName,
+            'Last_Name' => $this->faker->lastName,
+            'Lead_Source' => $this->faker->name,
+            'Phone' => $this->faker->phoneNumber,
+            'Email' => $this->faker->email,
+            'Member' => '33',
+            'Sponsor' => '0000',
+            'URL_1' => $this->faker->url,
+            'Affiliate_RecordE5FID' => 95641000006185231,
+            'Sales_Rep' => $this->faker->name,
+            'Available Collateral' => json_decode(json_encode(['real estate,stock portfolio']), true)
+        ];
+
+        $response = $this->zohoClient->insertRecords(
+           $request,
+            ['wfTrigger' => 'true']
+        );
+
+        $this->assertTrue($response->isSuccess());
+        $this->assertTrue(!empty($response->getRecordId()));
+        $this->assertTrue(is_array($response->getResponseData()));
     }
 
-    /**
-     * Destroy the test.
-     *
-     * @return void
-     */
-    protected function tearDown()
-    {
-    }
 }

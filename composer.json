@@ -25,7 +25,7 @@
         }
     ],
     "require": {
-        "php": ">=5.5",
+        "php": ">=7.2",
         "guzzlehttp/guzzle": "^6.3",
         "ext-redis": ">=2.2.7"
     },
@@ -35,10 +35,18 @@
         }
     },
     "require-dev": {
-        "codeception/verify": "^0.1",
-        "codeception/codeception": "^2.4",
-        "friendsofphp/php-cs-fixer": "^2.2",
-        "vlucas/phpdotenv": "^4.1"
+        "vlucas/phpdotenv": "^4.1",
+        "codeception/codeception": "^4.1",
+        "codeception/module-asserts": "^1.2",
+        "codeception/module-filesystem": "^1.0",
+        "codeception/module-phalcon": "^1.0",
+        "codeception/verify": "*",
+        "fzaninotto/faker": "^1.9",
+        "odan/phinx-migrations-generator": "^5",
+        "phpunit/phpunit": "^8.5", 
+        "squizlabs/php_codesniffer": "1.*",
+        "symfony/var-dumper": "^4.3@dev",
+        "codeception/module-phpbrowser": "^1.0"
     },
     "extra": {
         "branch-alias": {

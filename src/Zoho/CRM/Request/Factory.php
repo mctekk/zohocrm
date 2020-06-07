@@ -14,7 +14,7 @@ namespace Zoho\CRM\Request;
 use Zoho\CRM\Common\FactoryInterface;
 
 /**
- * Interface for create response objects
+ * Interface for create response objects.
  *
  * @implements FactoryInterface
  *
@@ -22,8 +22,16 @@ use Zoho\CRM\Common\FactoryInterface;
  */
 class Factory implements FactoryInterface
 {
-    public function createResponse($xml, $module, $method)
+    /**
+     * Create a response
+     *
+     * @param array $responseData
+     * @param string $module
+     * @param string $method
+     * @return void
+     */
+    public function createResponse(array $responseData, string $module, string $method) : Response
     {
-        return new Response($xml, $module, $method);
+        return new Response($responseData, $module, $method);
     }
 }

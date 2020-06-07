@@ -15,7 +15,7 @@ use Zoho\CRM\Wrapper\Element;
 
 /**
  * Entity for accounts inside Zoho
- * This class only have default parameters
+ * This class only have default parameters.
  *
  * @version 1.0.0
  */
@@ -29,28 +29,28 @@ class Contact extends Element
     public $Contact_Owner;
 
     /**
-     * Salutation for the lead
+     * Salutation for the lead.
      *
      * @var string
      */
     public $Salutation;
 
     /**
-     * First name of the lead
+     * First name of the lead.
      *
      * @var string
      */
     public $First_Name;
 
     /**
-     * The job position of the lead
+     * The job position of the lead.
      *
      * @var string
      */
     public $Title;
 
     /**
-     * Last name of the lead, this field is mandatory
+     * Last name of the lead, this field is mandatory.
      *
      * @var string
      */
@@ -64,14 +64,14 @@ class Contact extends Element
     public $Account_Name;
 
     /**
-     * Select the vendor relatedd to the contact
+     * Select the vendor relatedd to the contact.
      *
      * @var string
      */
     public $Vendor_Name;
 
     /**
-     * Source of the lead, that is, from where the lead is generated
+     * Source of the lead, that is, from where the lead is generated.
      *
      * @var string
      */
@@ -92,14 +92,14 @@ class Contact extends Element
     public $Date_Of_Birth;
 
     /**
-     * Select the person to whom the contact reports
+     * Select the person to whom the contact reports.
      *
      * @var int
      */
     public $Report_To;
 
     /**
-     * Phone number of the lead
+     * Phone number of the lead.
      *
      * @var string
      */
@@ -120,28 +120,28 @@ class Contact extends Element
     public $Other_Phone;
 
     /**
-     * Modile number of the lead
+     * Modile number of the lead.
      *
      * @var string
      */
     public $Mobile;
 
     /**
-     * Fax number of the lead
+     * Fax number of the lead.
      *
      * @var string
      */
     public $Fax;
 
     /**
-     * Email address of the lead
+     * Email address of the lead.
      *
      * @var string
      */
     public $Email;
 
     /**
-     * Secondary email address of the lead
+     * Secondary email address of the lead.
      *
      * @var string
      */
@@ -149,7 +149,7 @@ class Contact extends Element
 
     /**
      * Skype ID of the lead. Currently skype ID
-     * can be in the range of 6 to 32 characters
+     * can be in the range of 6 to 32 characters.
      *
      * @var string
      */
@@ -171,21 +171,21 @@ class Contact extends Element
 
     /**
      * Remove leads from your mailing list so that they will
-     * not receive any emails from your Zoho CRM account
+     * not receive any emails from your Zoho CRM account.
      *
      * @var string
      */
     public $Email_Opt_Out;
 
     /**
-     * Campaign related to the Lead
+     * Campaign related to the Lead.
      *
      * @var string
      */
     public $Campaign_Source;
 
     /**
-     * Other details about the lead
+     * Other details about the lead.
      *
      * @var string
      */
