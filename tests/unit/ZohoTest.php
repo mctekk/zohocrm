@@ -7,7 +7,8 @@ class ZohoTest extends PHPUnit_Framework_TestCase
 {
     protected $zohoClient;
     protected $redis;
-    
+    protected $faker;
+
     /**
      * Init the test
      *
@@ -23,6 +24,7 @@ class ZohoTest extends PHPUnit_Framework_TestCase
 
         $this->redis = new Redis();
         $this->redis->connect(getenv('REDIS_HOST'), getenv('REDIS_PORT'));
+
     }
 
     /**
@@ -33,23 +35,25 @@ class ZohoTest extends PHPUnit_Framework_TestCase
      */
     public function testBackwardCompatibility()
     {
+        $this->faker = Faker\Factory::create();
+
         $refresh = $this->zohoClient->generateAccessTokenByRefreshToken();
         $this->zohoClient->setModule('Leads');
 
         $lead = new Lead();
 
         $request = [
-            'First_Name' => 'disposabile111',
-            'Last_Name' => 'leadtest111',
-            'Lead_Source' => 'Christian Guthermann',
-            'Phone' => '22223425363447',
-            'Email' => 'c00000exa29@sharklasers.com',
+            'First_Name' => $this->faker->firstName,
+            'Last_Name' => $this->faker->lastName,
+            'Lead_Source' => $this->faker->name,
+            'Phone' => $this->faker->phoneNumber,
+            'Email' => $this->faker->email,
             'Member' => '33',
             'Sponsor' => '0000',
-            'Code' => '110100001570806179',
-            'URL_1' => 'https://lp.thefinancefactory.com/lp/r/23',
+            'Code' => $this->faker->randomNumber,
+            'URL_1' => $this->faker->url,
             'Affiliate_RecordE5FID' => 95641000006185231,
-            'Sales_Rep' => 'Mark Ledford',
+            'Sales_Rep' => $this->faker->name,
             'Available Collateral' => json_decode(json_encode(['real estate,stock portfolio']), true)
         ];
 
@@ -72,23 +76,25 @@ class ZohoTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateRecord()
     {
+        $this->faker = Faker\Factory::create();
+
         $refresh = $this->zohoClient->generateAccessTokenByRefreshToken();
         $this->zohoClient->setModule('Leads');
 
         $lead = new Lead();
 
         $request = [
-            'First_Name' => 'disposabile111',
-            'Last_Name' => 'leadtest111',
-            'Lead_Source' => 'Christian Guthermann',
-            'Phone' => '22223425363447',
-            'Email' => 'c00000exa29@sharklasers.com',
+            'First_Name' => $this->faker->firstName,
+            'Last_Name' => $this->faker->lastName,
+            'Lead_Source' => $this->faker->name,
+            'Phone' => $this->faker->phoneNumber,
+            'Email' => $this->faker->email,
             'Member' => '33',
             'Sponsor' => '0000',
-            'Code' => '110100001570806179',
-            'URL_1' => 'https://lp.thefinancefactory.com/lp/r/23',
+            'Code' => $this->faker->randomNumber,
+            'URL_1' => $this->faker->url,
             'Affiliate_RecordE5FID' => 95641000006185231,
-            'Sales_Rep' => 'Mark Ledford',
+            'Sales_Rep' => $this->faker->name,
             'Available Collateral' => json_decode(json_encode(['real estate,stock portfolio']), true)
         ];
 
@@ -109,23 +115,25 @@ class ZohoTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateRecordWithRedis()
     {
+        $this->faker = Faker\Factory::create();
+
         $refresh = $this->zohoClient->manageAccessTokenRedis($this->redis, 'test_zoho');
         $this->zohoClient->setModule('Leads');
 
         $lead = new Lead();
 
         $request = [
-            'First_Name' => 'disposabile111',
-            'Last_Name' => 'leadtest111',
-            'Lead_Source' => 'Christian Guthermann',
-            'Phone' => '22223425363447',
-            'Email' => 'c00000exa29@sharklasers.com',
+            'First_Name' => $this->faker->firstName,
+            'Last_Name' => $this->faker->lastName,
+            'Lead_Source' => $this->faker->name,
+            'Phone' => $this->faker->phoneNumber,
+            'Email' => $this->faker->email,
             'Member' => '33',
             'Sponsor' => '0000',
-            'Code' => '110100001570806179',
-            'URL_1' => 'https://lp.thefinancefactory.com/lp/r/23',
+            'Code' => $this->faker->randomNumber,
+            'URL_1' => $this->faker->url,
             'Affiliate_RecordE5FID' => 95641000006185231,
-            'Sales_Rep' => 'Mark Ledford',
+            'Sales_Rep' => $this->faker->name,
             'Available Collateral' => json_decode(json_encode(['real estate,stock portfolio']), true)
         ];
 
