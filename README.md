@@ -30,15 +30,15 @@ Zoho API V2 has change the wey they handle connecto to the API,  it now uses OAu
   - redirect_uri : {redirect_uri}
   - code : {code}
 - This final request will provide you with the refresh_token .
+  - Take into consideration refresh_token could be consider the identifier of the zoho account you are interacting with
 - Set client_id, client_secret and refresh_token on .env and the package will handle the rest
 
-*Todo* In future version we will add the refresh_token generator directly as a php script
+**Todo** In future version we will add the refresh_token generator directly as a php script
 
 ```php
 <?php
 
 use Zoho\CRM\ZohoClient;
-
 
 $ZohoClient = new ZohoClient(); // Make the connection to zoho api
 $ZohoClient->setAuthRefreshToken(getenv('ZOHO_AUTH_REFRESH_TOKEN'));
@@ -51,7 +51,7 @@ $this->zohoClient->setModule('Leads');
 
 $lead = new Lead();
 
-$request = [
+$leadRequest = [
 	'First_Name' => 'Test',
 	'Last_Name' => 'Zoho',
 	'Phone' => '000000000',
@@ -59,7 +59,7 @@ $request = [
 ];
 
 $response = $this->zohoClient->insertRecords(
-	$request,
+	$leadRequest,
 	['wfTrigger' => 'true']
 );
 
