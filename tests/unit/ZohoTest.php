@@ -5,22 +5,36 @@ use Zoho\CRM\ZohoClient;
 
 class ZohoTest extends PHPUnit_Framework_TestCase
 {
+    protected $zohoClient;
+    protected $redis;
+    
+    /**
+     * Init the test
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        $this->zohoClient = new ZohoClient();
+
+        $this->zohoClient->setAuthRefreshToken(getenv('ZOHO_AUTH_REFRESH_TOKEN'));
+        $this->zohoClient->setZohoClientId(getenv('ZOHO_CLIENT_ID'));
+        $this->zohoClient->setZohoClientSecret(getenv('ZOHO_CLIENT_SECRET'));
+
+        $this->redis = new Redis();
+        $this->redis->connect(getenv('REDIS_HOST'), getenv('REDIS_PORT'));
+    }
+
     /**
      * To avoid having to update code from client using old version of the lib
      * we still use deserialized and serialized even if they are no longer needed.
      *
      * @return void
      */
-    public function testCreateRecordV1()
+    public function testBackwardCompatibility()
     {
-        $ZohoClient = new ZohoClient();
-
-        $ZohoClient->setAuthRefreshToken(getenv('ZOHO_AUTH_REFRESH_TOKEN'));
-        $ZohoClient->setZohoClientId(getenv('ZOHO_CLIENT_ID'));
-        $ZohoClient->setZohoClientSecret(getenv('ZOHO_CLIENT_SECRET'));
-        $refresh = $ZohoClient->generateAccessTokenByRefreshToken();
-
-        $ZohoClient->setModule('Leads');
+        $refresh = $this->zohoClient->generateAccessTokenByRefreshToken();
+        $this->zohoClient->setModule('Leads');
 
         $lead = new Lead();
 
@@ -41,7 +55,7 @@ class ZohoTest extends PHPUnit_Framework_TestCase
 
         $data = $lead->deserializeXml($lead->serializeXml($request));
 
-        $response = $ZohoClient->insertRecords(
+        $response = $this->zohoClient->insertRecords(
             $data,
             ['wfTrigger' => 'true']
         );
@@ -58,14 +72,8 @@ class ZohoTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateRecord()
     {
-        $ZohoClient = new ZohoClient();
-
-        $ZohoClient->setAuthRefreshToken(getenv('ZOHO_AUTH_REFRESH_TOKEN'));
-        $ZohoClient->setZohoClientId(getenv('ZOHO_CLIENT_ID'));
-        $ZohoClient->setZohoClientSecret(getenv('ZOHO_CLIENT_SECRET'));
-        $refresh = $ZohoClient->generateAccessTokenByRefreshToken();
-
-        $ZohoClient->setModule('Leads');
+        $refresh = $this->zohoClient->generateAccessTokenByRefreshToken();
+        $this->zohoClient->setModule('Leads');
 
         $lead = new Lead();
 
@@ -84,7 +92,7 @@ class ZohoTest extends PHPUnit_Framework_TestCase
             'Available Collateral' => json_decode(json_encode(['real estate,stock portfolio']), true)
         ];
 
-        $response = $ZohoClient->insertRecords(
+        $response = $this->zohoClient->insertRecords(
             $request,
             ['wfTrigger' => 'true']
         );
@@ -101,16 +109,8 @@ class ZohoTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateRecordWithRedis()
     {
-        $ZohoClient = new ZohoClient();
-
-        $ZohoClient->setAuthRefreshToken(getenv('ZOHO_AUTH_REFRESH_TOKEN'));
-        $ZohoClient->setZohoClientId(getenv('ZOHO_CLIENT_ID'));
-        $ZohoClient->setZohoClientSecret(getenv('ZOHO_CLIENT_SECRET'));
-        $redis = new Redis();
-        $redis->connect(getenv('REDIS_HOST'), getenv('REDIS_PORT'));
-        $refresh = $ZohoClient->manageAccessTokenRedis($redis, 'test_zoho');
-
-        $ZohoClient->setModule('Leads');
+        $refresh = $this->zohoClient->manageAccessTokenRedis($this->redis, 'test_zoho');
+        $this->zohoClient->setModule('Leads');
 
         $lead = new Lead();
 
@@ -129,7 +129,7 @@ class ZohoTest extends PHPUnit_Framework_TestCase
             'Available Collateral' => json_decode(json_encode(['real estate,stock portfolio']), true)
         ];
 
-        $response = $ZohoClient->insertRecords(
+        $response = $this->zohoClient->insertRecords(
            $request,
             ['wfTrigger' => 'true']
         );
@@ -138,4 +138,5 @@ class ZohoTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(!empty($response->getRecordId()));
         $this->assertTrue(is_array($response->getResponseData()));
     }
+
 }

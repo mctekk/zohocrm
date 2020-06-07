@@ -352,7 +352,8 @@ class ZohoClient
         $formattedCurrentDate = strtotime($currentDate->format('Y-m-d H:i:s'));
         $diffDate = $formattedCurrentDate - $redis->get($key . '_issued_time');
 
-        if ($redis->exists($key) && ($diffDate < 3600)) {
+        //only refresh the token before 1h pass
+        if ($redis->exists($key) && ($diffDate < 3300)) {
             $this->setAccessToken($redis->get($key));
         } else {
             $this->generateAccessTokenByRefreshToken();
