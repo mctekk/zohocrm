@@ -12,6 +12,7 @@
 namespace Zoho\CRM\Request;
 
 use Zoho\CRM\Common\HttpClientInterface;
+use Exception;
 
 /**
  * Simple cURL based HTTP Client.
@@ -26,10 +27,13 @@ class HttpClient implements HttpClientInterface
     protected $timeout = 5;
     protected $retry = 2;
 
+    /**
+     * Construct
+     */
     public function __construct()
     {
         if (!function_exists('curl_init')) {
-            throw new \Exception('cURL is not supported by server.');
+            throw new Exception('cURL is not supported by server.');
         }
     }
 

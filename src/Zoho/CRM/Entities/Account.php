@@ -15,7 +15,7 @@ use Zoho\CRM\Wrapper\Element;
 
 /**
  * Entity for accounts inside Zoho
- * This class only have default parameters
+ * This class only have default parameters.
  *
  * @version 1.0.0
  */

@@ -6,3 +6,4 @@ composer.lock
 vendor/
 ._*
 tests/_output/*
+.env

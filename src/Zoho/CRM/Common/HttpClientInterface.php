@@ -12,7 +12,7 @@
 namespace Zoho\CRM\Common;
 
 /**
- * Common interface for Http clients
+ * Common interface for Http clients.
  *
  * @version 1.0.0
  */

@@ -11,8 +11,6 @@
 
 namespace Zoho\CRM\Request;
 
-use Zoho\CRM\Exception\ZohoCRMException;
-
 /**
  * Zoho CRM API Response.
  *
@@ -75,7 +73,7 @@ class Response
     /**
      * Response Data from request.
      *
-     * @var string
+     * @var array
      */
     protected $responseData;
 
@@ -86,7 +84,7 @@ class Response
      */
     protected $status;
 
-    public function __construct($responseData, $module, $method)
+    public function __construct(array $responseData, string $module, string $method)
     {
         $this->responseData = $responseData;
         $this->module = $module;
@@ -98,9 +96,10 @@ class Response
      * Is successfull.
      *
      * @deprecated 1.0
+     *
      * @return void
      */
-    public function ifSuccess()
+    public function ifSuccess() : bool
     {
         return $this->isSuccess();
     }
@@ -110,7 +109,7 @@ class Response
      *
      * @return bool
      */
-    public function isSuccess()
+    public function isSuccess() : bool
     {
         if (mb_strpos($this->status, 'success') !== false) {
             return true;
@@ -123,9 +122,10 @@ class Response
      * Parse response.
      *
      * @return void
+     *
      * @todo Need to convert json data from Zoho API v2 to the same array given in our Zoho CRM SDK
      */
-    protected function parseResponse()
+    protected function parseResponse() : void
     {
         if ($this->method == 'get' && ($this->module == 'Leads' || $this->module == 'Vendors')) {
             $this->parseResponseGetRecords();
@@ -141,7 +141,7 @@ class Response
      *
      * @return void
      */
-    protected function parseResponseGetUsers()
+    protected function parseResponseGetUsers() : void
     {
         $data = $this->responseData['users'];
         $records = [];
@@ -166,9 +166,10 @@ class Response
      * Parse response for functions using GET method.
      *
      * @param [type] $xml
+     *
      * @return void
      */
-    protected function parseResponseGetRecords()
+    protected function parseResponseGetRecords() : void
     {
         if (is_array($this->responseData)) {
             $data = $this->responseData['data'];
@@ -212,9 +213,10 @@ class Response
 
     /**
      * Parse response for functions using POST or PUT method.
+     *
      * @return void
      */
-    protected function parseResponsePostRecords()
+    protected function parseResponsePostRecords() : void
     {
         $data = current($this->responseData['data']);
         $this->status = $data['status'];
@@ -222,34 +224,34 @@ class Response
     }
 
     /**
-    * Setters & Getters.
-    */
-    public function getModule()
+     * Setters & Getters.
+     */
+    public function getModule() : string
     {
         return $this->module;
     }
 
-    public function getMessage()
+    public function getMessage() : string
     {
         return $this->message;
     }
 
-    public function getCode()
+    public function getCode() : string
     {
         return $this->code;
     }
 
-    public function getRequestURI()
+    public function getRequestURI() : string
     {
         return $this->uri;
     }
 
-    public function getRecords()
+    public function getRecords() : string
     {
         return $this->records;
     }
 
-    public function getResponseData()
+    public function getResponseData() : array
     {
         return $this->responseData;
     }
@@ -259,12 +261,12 @@ class Response
         return $this->records;
     }
 
-    public function getRecordId()
+    public function getRecordId() : string
     {
         return $this->recordId;
     }
 
-    public function getResponse()
+    public function getResponse() : array
     {
         return [
             'module' => $this->module,
