@@ -14,19 +14,19 @@ namespace Zoho\CRM\Entities;
 use Zoho\CRM\Wrapper\Element;
 
 /**
- * Entity for leads inside Zoho
+ * Entity for accounts inside Zoho
  * This class only have default parameters
  *
  * @version 1.0.0
  */
-class Lead extends Element
+class Contact extends Element
 {
     /**
      * Zoho CRM user to whom the Lead is assigned.
      *
      * @var string
      */
-    public $Lead_Owner;
+    public $Contact_Owner;
 
     /**
      * Salutation for the lead
@@ -50,19 +50,25 @@ class Lead extends Element
     public $Title;
 
     /**
-     * Last name of the lead
+     * Last name of the lead, this field is mandatory
      *
      * @var string
      */
     public $Last_Name;
 
     /**
-     * Name of the company where the lead is working.
-     * This field is a mandatory
+     * Select the account related to the contact.
      *
      * @var string
      */
-    public $Company;
+    public $Account_Name;
+
+    /**
+     * Select the vendor relatedd to the contact
+     *
+     * @var string
+     */
+    public $Vendor_Name;
 
     /**
      * Source of the lead, that is, from where the lead is generated
@@ -72,18 +78,25 @@ class Lead extends Element
     public $Lead_Source;
 
     /**
-     * Industry to which the lead belongs
+     * Specify the department of the contact.
      *
      * @var string
      */
-    public $Industry;
+    public $Department;
 
     /**
-     * Annual revenue of the company where the lead is working
+     * Specify the birthday of the contact to send greetings for a better relationship.
+     *
+     * @var Date
+     */
+    public $Date_Of_Birth;
+
+    /**
+     * Select the person to whom the contact reports
      *
      * @var int
      */
-    public $Annual_Revenue;
+    public $Report_To;
 
     /**
      * Phone number of the lead
@@ -91,6 +104,20 @@ class Lead extends Element
      * @var string
      */
     public $Phone;
+
+    /**
+     * Specify the home phone number of the contact.
+     *
+     * @var string
+     */
+    public $Home_Phone;
+
+    /**
+     * Specify the other phone number of the contact (if any).
+     *
+     * @var string
+     */
+    public $Other_Phone;
 
     /**
      * Modile number of the lead
@@ -129,32 +156,18 @@ class Lead extends Element
     public $Skype_ID;
 
     /**
-     * Web site of the lead
+     * Specify the name of the contact’s assistant.
      *
      * @var string
      */
-    public $Website;
+    public $Assistant;
 
     /**
-     * Status of the lead
+     * Specify the phone number of the contact's assistant.
      *
      * @var string
      */
-    public $Lead_Status;
-
-    /**
-     * Rating of the lead
-     *
-     * @var string
-     */
-    public $Rating;
-
-    /**
-     * Number of employees in lead's company
-     *
-     * @var int
-     */
-    public $No_of_Employees;
+    public $Asst_Phone;
 
     /**
      * Remove leads from your mailing list so that they will
@@ -172,44 +185,43 @@ class Lead extends Element
     public $Campaign_Source;
 
     /**
-     * Street address of the lead
-     *
-     * @var string
-     */
-    public $Street;
-
-    /**
-     * Name of the city where the lead lives
-     *
-     * @var string
-     */
-    public $City;
-
-    /**
-     * Name of the state where the lead lives
-     *
-     * @var string
-     */
-    public $State;
-
-    /**
-     * Postal code of the lead's address
-     *
-     * @var string
-     */
-    public $Zip_Code;
-
-    /**
-     * Name of the lead's country
-     *
-     * @var string
-     */
-    public $Country;
-
-    /**
      * Other details about the lead
      *
      * @var string
      */
     public $Description;
+
+    /**
+     * Specify the primary address of the contact.
+     *
+     * Divided into 5 parts:
+     *
+     *     @var string
+     *     @var string
+     *     @var string
+     *     @var string
+     *     @var string
+     */
+    protected $Street;
+    protected $City;
+    protected $State;
+    protected $Zip_Code;
+    protected $Country;
+
+    /**
+     * Specify the primary address of the contact.
+     *
+     * Divided into 5 parts:
+     *
+     *     @var string
+     *     @var string
+     *     @var string
+     *     @var string
+     *     @var string
+     */
+    protected $Other_Street;
+    protected $Other_City;
+    protected $Other_State;
+    protected $Other_Zip_Code;
+    protected $Other_Country;
 }

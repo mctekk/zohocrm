@@ -1,16 +1,24 @@
 <?php
 
+/*
+ * This file is part of mctekk/zohocrm library.
+ *
+ * (c) MCTekK S.R.L. https://mctekk.com/
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Zoho\CRM\Exception;
 
 /**
  * Zoho CRM Exception.
  *
- * @package Zoho\CRM\Exception
  * @version 1.0.0
  */
 class ZohoCRMException extends \Exception
 {
-    protected $errorMessages = array(
+    protected $errorMessages = [
         '0000' => 'Unknown error',
         '4000' => 'Please use Authtoken, instead of API ticket and API key.',
         '4500' => 'Internal server error while processing this request.',
@@ -39,14 +47,14 @@ class ZohoCRMException extends \Exception
         '4807' => 'Exceeded file size limit.',
         '4424' => 'Invalid File Type.',
         '4809' => 'Exceeded storage space limit.',
-    );
+    ];
 
     public function __construct($message, $code)
     {
         if (!array_key_exists($code, $this->errorMessages)) {
-            throw new \Exception("Unknown Zoho CRM error code: $code");
+            throw new \Exception("Unknown Zoho CRM error code: $code -->" . $message);
         }
 
-        parent::__construct($message . ' ' . $this->errorMessages[$code], $code);
+        parent::__construct($message.' '.$this->errorMessages[$code], $code);
     }
 }
